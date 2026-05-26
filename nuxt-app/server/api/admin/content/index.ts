@@ -13,7 +13,10 @@ export default defineEventHandler(async (event) => {
     const [total, items] = await Promise.all([
       prisma.contentPage.count(),
       prisma.contentPage.findMany({
-        include: { menu: { select: { id: true, name: true } } },
+        include: {
+          menu: { select: { id: true, name: true } },
+          files: { select: { id: true } },
+        },
         orderBy: { updatedAt: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
@@ -25,14 +28,22 @@ export default defineEventHandler(async (event) => {
 
   if (event.method === 'POST') {
     const body = await readBody(event)
+    const { fileIds, ...pageData } = body
     // 检查该菜单是否已有内容页
     const existing = await prisma.contentPage.findUnique({
-      where: { menuId: body.menuId },
+      where: { menuId: pageData.menuId },
     })
     if (existing) {
       throw createError({ statusCode: 400, message: '该菜单已有内容页，请直接编辑' })
     }
-    const contentPage = await prisma.contentPage.create({ data: body })
+    const contentPage = await prisma.contentPage.create({ data: pageData })
+    // 关联已上传的文件
+    if (Array.isArray(fileIds) && fileIds.length > 0) {
+      await prisma.pageFile.updateMany({
+        where: { id: { in: fileIds } },
+        data: { pageId: contentPage.id },
+      })
+    }
     return { code: 0, data: contentPage }
   }
 })

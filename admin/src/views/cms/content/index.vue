@@ -1,7 +1,12 @@
 <script setup lang="tsx">
 import { ref, reactive, computed } from 'vue';
-import { NButton, NSpace, NPopconfirm, NTag, NSwitch, NInput, NSelect, NRadioGroup, NRadioButton, NAlert } from 'naive-ui';
-import { fetchNavList, fetchContentList, fetchContentDetail, fetchCreateContent, fetchUpdateContent, fetchDeleteContent } from '@/service/api';
+import {
+  NButton, NSpace, NPopconfirm, NTag, NSwitch, NInput, NSelect,
+  NRadioGroup, NRadioButton, NAlert, NUpload, NUploadDragger,
+  NIcon, NProgress, NText,
+} from 'naive-ui';
+import type { UploadCustomRequestOptions } from 'naive-ui';
+import { fetchNavList, fetchContentList, fetchContentDetail, fetchCreateContent, fetchUpdateContent, fetchDeleteContent, fetchUploadFile, fetchDeleteFile } from '@/service/api';
 import { useNaivePaginatedTable } from '@/hooks/common/table';
 import { useAppStore } from '@/store/modules/app';
 import { useBoolean } from '@sa/hooks';
@@ -14,13 +19,32 @@ const searchParams = reactive({ title: '', menuId: undefined as number | undefin
 const menus = ref<Api.Cms.NavMenu[]>([]);
 const editTarget = ref<Api.Cms.ContentPage | null>(null);
 const form = reactive<Api.Cms.ContentPageForm>({
-  title: '', contentType: 'RICHTEXT', richText: '', isPublished: true, menuId: null
+  title: '', contentType: 'RICHTEXT', richText: '', isPublished: true, menuId: null, fileIds: [],
 });
 const saving = ref(false);
 
+// 已上传文件列表（弹窗内临时存储）
+const uploadedFiles = ref<Api.Cms.PageFile[]>([]);
+const uploading = ref(false);
+
 const paginationReactive = reactive({ page: 1, pageSize: 20 });
 
-// 只显示 PAGE 类型菜单（目录类型不需要内容页）
+// 文件类型图标
+function fileTypeIcon(fileType: string) {
+  const map: Record<string, string> = {
+    PDF: '📄', WORD: '📝', IMAGE: '🖼️', VIDEO: '🎬', OTHER: '📎',
+  };
+  return map[fileType] || '📎';
+}
+
+// 文件大小格式化
+function formatSize(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+// 只显示 PAGE 类型菜单
 const flatMenuOptions = computed(() => {
   const opts: { label: string; value: number }[] = [];
   menus.value.forEach(m => {
@@ -64,6 +88,13 @@ const { columns, data, loading, pagination, getData } = useNaivePaginatedTable({
     },
     { title: '所属菜单', key: 'menu', minWidth: 140, render: (row: Api.Cms.ContentPage) => row.menu?.name || '-' },
     {
+      title: '附件数', key: 'files', minWidth: 80, align: 'center',
+      render: (row: Api.Cms.ContentPage) => {
+        const count = row.files?.length || 0;
+        return count > 0 ? <NTag type="success" size="small">{count} 个文件</NTag> : <span class="text-gray-400">-</span>;
+      }
+    },
+    {
       title: '状态', key: 'isPublished', minWidth: 90, align: 'center',
       render: (row: Api.Cms.ContentPage) => <NTag type={row.isPublished ? 'success' : 'default'} size="small">{row.isPublished ? '已发布' : '草稿'}</NTag>
     },
@@ -84,20 +115,58 @@ const { columns, data, loading, pagination, getData } = useNaivePaginatedTable({
 async function openEdit(row: Api.Cms.ContentPage) {
   const { data: detail } = await fetchContentDetail(row.id);
   editTarget.value = row;
+  uploadedFiles.value = detail?.files || [];
   Object.assign(form, {
     title: row.title,
     contentType: row.contentType,
     richText: detail?.richText || '',
     isPublished: row.isPublished,
     menuId: row.menuId,
+    fileIds: [],
   });
   openModal();
 }
 
 function openCreate() {
   editTarget.value = null;
-  Object.assign(form, { title: '', contentType: 'RICHTEXT', richText: '', isPublished: true, menuId: null });
+  uploadedFiles.value = [];
+  Object.assign(form, { title: '', contentType: 'RICHTEXT', richText: '', isPublished: true, menuId: null, fileIds: [] });
   openModal();
+}
+
+// 自定义上传逻辑
+async function handleCustomUpload({ file, onProgress, onFinish, onError }: UploadCustomRequestOptions) {
+  uploading.value = true;
+  try {
+    const fd = new FormData();
+    fd.append('file', file.file as File);
+    onProgress({ percent: 50 });
+    const res = await fetchUploadFile(fd);
+    if (res.data) {
+      uploadedFiles.value.push(res.data);
+      form.fileIds = [...(form.fileIds || []), res.data.id];
+    }
+    onProgress({ percent: 100 });
+    onFinish();
+    window.$message?.success(`${file.name} 上传成功`);
+  } catch (e) {
+    onError();
+    window.$message?.error(`${file.name} 上传失败`);
+  } finally {
+    uploading.value = false;
+  }
+}
+
+// 删除已上传文件
+async function handleRemoveFile(fileId: number) {
+  try {
+    await fetchDeleteFile(fileId);
+    uploadedFiles.value = uploadedFiles.value.filter(f => f.id !== fileId);
+    form.fileIds = (form.fileIds || []).filter(id => id !== fileId);
+    window.$message?.success('文件已删除');
+  } catch {
+    window.$message?.error('删除失败');
+  }
 }
 
 async function handleSave() {
@@ -106,15 +175,18 @@ async function handleSave() {
     return;
   }
   saving.value = true;
-  if (editTarget.value) {
-    await fetchUpdateContent(editTarget.value.id, form);
-  } else {
-    await fetchCreateContent(form);
+  try {
+    if (editTarget.value) {
+      await fetchUpdateContent(editTarget.value.id, form);
+    } else {
+      await fetchCreateContent(form);
+    }
+    window.$message?.success(editTarget.value ? '更新成功' : '创建成功');
+    closeModal();
+    getData();
+  } finally {
+    saving.value = false;
   }
-  saving.value = false;
-  window.$message?.success(editTarget.value ? '更新成功' : '创建成功');
-  closeModal();
-  getData();
 }
 
 async function handleDelete(id: number) {
@@ -156,7 +228,7 @@ function handleReset() { Object.assign(searchParams, { title: '', menuId: undefi
         :loading="loading"
         :pagination="pagination"
         :flex-height="!appStore.isMobile"
-        :scroll-x="800"
+        :scroll-x="900"
         remote
         class="sm:h-full"
         size="small"
@@ -166,7 +238,7 @@ function handleReset() { Object.assign(searchParams, { title: '', menuId: undefi
     <!-- 编辑/创建 Modal -->
     <NModal v-model:show="showModal" preset="card" :title="editTarget ? '编辑内容' : '新建内容'" class="w-900px">
       <NForm label-placement="left" label-width="90">
-        <NFormItem label="所属菜单" :feedback="'选择该内容对应的菜单项（仅页面类型菜单可配置内容）'" feedback-status="info">
+        <NFormItem label="所属菜单" :feedback="'仅页面类型菜单可配置内容'" feedback-status="info">
           <NSelect v-model:value="form.menuId" :options="flatMenuOptions" placeholder="选择菜单" :disabled="!!editTarget" />
         </NFormItem>
         <NFormItem label="页面标题">
@@ -174,20 +246,75 @@ function handleReset() { Object.assign(searchParams, { title: '', menuId: undefi
         </NFormItem>
         <NFormItem label="内容类型">
           <NRadioGroup v-model:value="form.contentType">
-            <NRadioButton value="RICHTEXT">富文本</NRadioButton>
+            <NRadioButton value="RICHTEXT">富文本编辑</NRadioButton>
             <NRadioButton value="FILE">文件预览</NRadioButton>
           </NRadioGroup>
         </NFormItem>
+
+        <!-- 富文本编辑器 -->
         <NFormItem v-if="form.contentType === 'RICHTEXT'" label="正文内容">
           <div class="w-full">
             <RichEditor v-model="form.richText" placeholder="请输入正文内容..." :height="420" />
           </div>
         </NFormItem>
-        <NFormItem v-else label="说明">
-          <NAlert type="info" :show-icon="false">
-            保存后在详情页上传文件，支持 PDF、Word、视频等格式，前端页面内嵌在线预览
-          </NAlert>
-        </NFormItem>
+
+        <!-- 文件上传区域 -->
+        <template v-else>
+          <NFormItem label="上传文件">
+            <div class="w-full">
+              <NUpload
+                multiple
+                :custom-request="handleCustomUpload"
+                :show-file-list="false"
+                accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.mp4,.mov,.avi,.webm,.jpg,.jpeg,.png,.gif,.webp"
+              >
+                <NUploadDragger>
+                  <div class="py-6 text-center">
+                    <NIcon size="36" class="text-gray-400 mb-2">
+                      <icon-ic-round-cloud-upload />
+                    </NIcon>
+                    <p class="text-sm text-gray-500 mb-1">点击或拖拽文件到此处上传</p>
+                    <p class="text-xs text-gray-400">支持 PDF、Word、Excel、PPT、视频、图片，单文件最大 100MB</p>
+                  </div>
+                </NUploadDragger>
+              </NUpload>
+
+              <!-- 已上传文件列表 -->
+              <div v-if="uploadedFiles.length > 0" class="mt-3 border border-gray-200 rounded overflow-hidden">
+                <div class="bg-gray-50 px-3 py-2 text-xs text-gray-500 border-b border-gray-200">
+                  已上传文件（{{ uploadedFiles.length }} 个）
+                </div>
+                <div
+                  v-for="file in uploadedFiles"
+                  :key="file.id"
+                  class="flex items-center justify-between px-3 py-2 border-b border-gray-100 last:border-b-0 hover:bg-gray-50"
+                >
+                  <div class="flex items-center gap-2 min-w-0">
+                    <span class="text-base flex-shrink-0">{{ fileTypeIcon(file.fileType) }}</span>
+                    <div class="min-w-0">
+                      <div class="text-sm text-gray-800 truncate">{{ file.originalName }}</div>
+                      <div class="text-xs text-gray-400">{{ formatSize(file.size) }}</div>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2 flex-shrink-0">
+                    <a :href="file.url" target="_blank" class="text-xs text-blue-500 hover:underline">预览</a>
+                    <NPopconfirm @positive-click="handleRemoveFile(file.id)">
+                      <template #trigger>
+                        <NButton size="tiny" type="error" ghost>删除</NButton>
+                      </template>
+                      确认删除该文件？
+                    </NPopconfirm>
+                  </div>
+                </div>
+              </div>
+
+              <NAlert v-else type="info" :show-icon="false" class="mt-2">
+                上传后文件将在前端页面内嵌预览（PDF/Word 使用在线查看器，视频直接播放）
+              </NAlert>
+            </div>
+          </NFormItem>
+        </template>
+
         <NFormItem label="立即发布">
           <NSwitch v-model:value="form.isPublished" />
         </NFormItem>

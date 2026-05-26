@@ -18,7 +18,15 @@ export default defineEventHandler(async (event) => {
 
   if (event.method === 'PUT') {
     const body = await readBody(event)
-    const page = await prisma.contentPage.update({ where: { id }, data: body })
+    const { fileIds, ...pageData } = body
+    const page = await prisma.contentPage.update({ where: { id }, data: pageData })
+    // 关联新上传的文件（fileIds 中未关联的）
+    if (Array.isArray(fileIds) && fileIds.length > 0) {
+      await prisma.pageFile.updateMany({
+        where: { id: { in: fileIds } },
+        data: { pageId: id },
+      })
+    }
     return { code: 0, data: page }
   }
 

@@ -69,3 +69,13 @@ export function fetchUpdateNews(id: number, data: Api.Cms.NewsForm) {
 export function fetchDeleteNews(id: number) {
   return request({ url: `/news/${id}`, method: 'delete' });
 }
+
+/** 上传文件（管理员） */
+export function fetchUploadFile(formData: FormData) {
+  return request<Api.Cms.PageFile>({
+    url: '/files/upload',
+    method: 'post',
+    data: formData,
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+}

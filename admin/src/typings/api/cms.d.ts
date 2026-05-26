@@ -40,6 +40,7 @@ declare namespace Api {
       richText: string;
       isPublished: boolean;
       menuId: number | null;
+      fileIds?: number[];
     }
 
     interface PageFile {

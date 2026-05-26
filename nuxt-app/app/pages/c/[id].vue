@@ -144,11 +144,24 @@ function formatSize(bytes: number) {
               <div class="flex items-center gap-2 px-5 py-3 border-b border-gray-100 bg-gray-50">
                 <UIcon name="lucide:file-text" class="text-[#B01C1C]" />
                 <span class="text-sm text-gray-700 font-medium">{{ previewFile.originalName }}</span>
-                <a :href="previewFile.url" download class="ml-auto text-xs text-[#B01C1C] hover:underline flex items-center gap-1">
+                <a :href="previewFile.url" target="_blank" class="ml-auto text-xs text-[#B01C1C] hover:underline flex items-center gap-1">
                   <UIcon name="lucide:download" class="text-xs" /> 下载
                 </a>
               </div>
-              <iframe :src="`/api/files/preview?url=${encodeURIComponent(previewFile.url)}`" class="w-full border-0" style="min-height: 75vh;" title="PDF 在线预览" />
+              <object
+                :data="previewFile.url"
+                type="application/pdf"
+                class="w-full border-0"
+                style="min-height: 75vh;"
+              >
+                <div class="flex flex-col items-center justify-center py-16 gap-4 text-gray-400">
+                  <UIcon name="lucide:file-text" class="text-5xl text-gray-200" />
+                  <p class="text-sm">浏览器不支持内嵌预览</p>
+                  <a :href="previewFile.url" target="_blank" class="inline-flex items-center gap-2 bg-[#B01C1C] text-white px-5 py-2 text-sm hover:bg-[#8C1515] transition-colors">
+                    <UIcon name="lucide:external-link" /> 在新页面打开
+                  </a>
+                </div>
+              </object>
             </div>
 
             <!-- Word 下载 -->
