@@ -32,25 +32,29 @@ const latestList = computed(() => latestData.value?.data?.items?.filter((n: { id
 
 <template>
   <div>
-    <!-- 顶部横幅 -->
-    <div class="bg-[#B01C1C] py-8">
-      <div class="max-w-7xl mx-auto px-6">
-        <nav class="flex items-center gap-1.5 text-xs text-red-300 mb-3">
-          <NuxtLink to="/" class="hover:text-white transition-colors">首页</NuxtLink>
-          <UIcon name="lucide:chevron-right" class="text-xs opacity-60" />
-          <NuxtLink to="/news" class="hover:text-white transition-colors">新闻动态</NuxtLink>
-          <UIcon name="lucide:chevron-right" class="text-xs opacity-60" />
-          <span class="text-white/60 line-clamp-1 max-w-[200px]">{{ news?.title }}</span>
+    <!-- 页面顶部 -->
+    <div class="bg-gray-50 border-b border-gray-200">
+      <div class="max-w-7xl mx-auto px-6 py-3">
+        <nav class="flex items-center gap-1.5 text-xs text-gray-500">
+          <NuxtLink to="/" class="hover:text-[#B01C1C] transition-colors">首页</NuxtLink>
+          <UIcon name="lucide:chevron-right" class="text-xs opacity-40" />
+          <NuxtLink to="/news" class="hover:text-[#B01C1C] transition-colors">新闻动态</NuxtLink>
+          <UIcon name="lucide:chevron-right" class="text-xs opacity-40" />
+          <span class="text-gray-800 font-medium line-clamp-1 max-w-[300px]">{{ news?.title }}</span>
         </nav>
-        <div v-if="news?.category" class="mb-2">
-          <span
-            class="text-xs font-medium px-2.5 py-1 rounded-md"
-            :style="{ backgroundColor: CATEGORY_COLOR[news.category] || '#fff3', color: '#fff' }"
-          >
-            {{ news.category }}
-          </span>
+      </div>
+    </div>
+    <div class="bg-white border-b border-gray-100">
+      <div class="max-w-7xl mx-auto px-6 py-6">
+        <div class="flex items-start gap-3">
+          <div class="w-1 h-7 bg-[#B01C1C] rounded-sm flex-shrink-0 mt-0.5" />
+          <div>
+            <div v-if="news?.category" class="inline-flex items-center text-xs font-medium text-[#B01C1C] bg-red-50 border border-red-100 px-2 py-0.5 mb-2">
+              {{ news.category }}
+            </div>
+            <h1 class="text-xl md:text-2xl font-bold text-gray-800 leading-snug">{{ news?.title }}</h1>
+          </div>
         </div>
-        <h1 class="text-xl md:text-2xl font-bold text-white leading-snug">{{ news?.title }}</h1>
       </div>
     </div>
 

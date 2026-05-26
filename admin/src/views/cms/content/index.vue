@@ -1,10 +1,11 @@
 <script setup lang="tsx">
 import { ref, reactive, computed } from 'vue';
-import { NButton, NSpace, NPopconfirm, NTag, NSwitch, NInput, NSelect, NRadioGroup, NRadioButton } from 'naive-ui';
+import { NButton, NSpace, NPopconfirm, NTag, NSwitch, NInput, NSelect, NRadioGroup, NRadioButton, NAlert } from 'naive-ui';
 import { fetchNavList, fetchContentList, fetchContentDetail, fetchCreateContent, fetchUpdateContent, fetchDeleteContent } from '@/service/api';
 import { useNaivePaginatedTable } from '@/hooks/common/table';
 import { useAppStore } from '@/store/modules/app';
 import { useBoolean } from '@sa/hooks';
+import RichEditor from '@/components/custom/RichEditor.vue';
 
 const appStore = useAppStore();
 const { bool: showModal, setTrue: openModal, setFalse: closeModal } = useBoolean();
@@ -163,7 +164,7 @@ function handleReset() { Object.assign(searchParams, { title: '', menuId: undefi
     </NCard>
 
     <!-- 编辑/创建 Modal -->
-    <NModal v-model:show="showModal" preset="card" :title="editTarget ? '编辑内容' : '新建内容'" class="w-600px">
+    <NModal v-model:show="showModal" preset="card" :title="editTarget ? '编辑内容' : '新建内容'" class="w-900px">
       <NForm label-placement="left" label-width="90">
         <NFormItem label="所属菜单" :feedback="'选择该内容对应的菜单项（仅页面类型菜单可配置内容）'" feedback-status="info">
           <NSelect v-model:value="form.menuId" :options="flatMenuOptions" placeholder="选择菜单" :disabled="!!editTarget" />
@@ -171,14 +172,16 @@ function handleReset() { Object.assign(searchParams, { title: '', menuId: undefi
         <NFormItem label="页面标题">
           <NInput v-model:value="form.title" placeholder="页面标题" />
         </NFormItem>
-        <NFormItem label="内容类型" :feedback="form.contentType === 'RICHTEXT' ? '直接编写或粘贴富文本 HTML 内容' : '上传文件后在页面内嵌预览（PDF/Word/视频）'" :feedback-status="form.contentType === 'RICHTEXT' ? 'info' : 'warning'">
+        <NFormItem label="内容类型">
           <NRadioGroup v-model:value="form.contentType">
             <NRadioButton value="RICHTEXT">富文本</NRadioButton>
             <NRadioButton value="FILE">文件预览</NRadioButton>
           </NRadioGroup>
         </NFormItem>
         <NFormItem v-if="form.contentType === 'RICHTEXT'" label="正文内容">
-          <NInput v-model:value="form.richText" type="textarea" :rows="10" placeholder="支持 HTML 内容，粘贴富文本编辑器的输出" />
+          <div class="w-full">
+            <RichEditor v-model="form.richText" placeholder="请输入正文内容..." :height="420" />
+          </div>
         </NFormItem>
         <NFormItem v-else label="说明">
           <NAlert type="info" :show-icon="false">

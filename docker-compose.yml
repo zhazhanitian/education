@@ -11,6 +11,8 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./postgres/init:/docker-entrypoint-initdb.d
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
     networks:
       - edu-net
     healthcheck:
@@ -50,6 +52,8 @@ services:
       dockerfile: Dockerfile
     container_name: edu-admin
     restart: unless-stopped
+    ports:
+      - "${ADMIN_PORT:-8073}:80"
     networks:
       - edu-net
 

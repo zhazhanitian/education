@@ -50,16 +50,23 @@ function formatDate(d?: string) {
 
 <template>
   <div>
-    <!-- 页面顶部横幅 -->
-    <div class="bg-[#B01C1C] py-10">
-      <div class="max-w-7xl mx-auto px-6">
-        <div class="flex items-center gap-2 text-red-300 text-xs mb-3">
-          <NuxtLink to="/" class="hover:text-white transition-colors">首页</NuxtLink>
-          <UIcon name="lucide:chevron-right" class="text-xs opacity-60" />
-          <span class="text-white/60">新闻动态</span>
+    <!-- 页面顶部 -->
+    <div class="bg-gray-50 border-b border-gray-200">
+      <div class="max-w-7xl mx-auto px-6 py-3">
+        <nav class="flex items-center gap-1.5 text-xs text-gray-500">
+          <NuxtLink to="/" class="hover:text-[#B01C1C] transition-colors">首页</NuxtLink>
+          <UIcon name="lucide:chevron-right" class="text-xs opacity-40" />
+          <span class="text-gray-800 font-medium">新闻动态</span>
+        </nav>
+      </div>
+    </div>
+    <div class="bg-white border-b border-gray-100">
+      <div class="max-w-7xl mx-auto px-6 py-6">
+        <div class="flex items-center gap-3">
+          <div class="w-1 h-7 bg-[#B01C1C] rounded-sm flex-shrink-0" />
+          <h1 class="text-xl md:text-2xl font-bold text-gray-800">新闻动态</h1>
+          <span class="text-xs text-gray-400 hidden md:block">News & Updates</span>
         </div>
-        <h1 class="text-2xl md:text-3xl font-bold text-white mb-2">新闻动态</h1>
-        <p class="text-red-300 text-sm">聚焦媒体报道、获奖公告、校园动态等最新资讯</p>
       </div>
     </div>
 
