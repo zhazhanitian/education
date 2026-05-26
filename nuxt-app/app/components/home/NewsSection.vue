@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const { data } = await useFetch('/api/news', { query: { page: 1, pageSize: 6 } })
-const newsList = computed(() => data.value?.data?.list ?? [])
+const newsList = computed(() => data.value?.data?.items ?? [])
 const topNews = computed(() => newsList.value[0] ?? null)
 const restNews = computed(() => newsList.value.slice(1, 6))
 

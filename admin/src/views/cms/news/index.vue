@@ -1,10 +1,11 @@
 <script setup lang="tsx">
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive } from 'vue';
 import { NButton, NSpace, NPopconfirm, NTag, NInput, NSelect, NSwitch } from 'naive-ui';
 import { fetchNewsList, fetchNewsDetail, fetchCreateNews, fetchUpdateNews, fetchDeleteNews } from '@/service/api';
 import { useNaivePaginatedTable } from '@/hooks/common/table';
 import { useAppStore } from '@/store/modules/app';
 import { useBoolean } from '@sa/hooks';
+import RichEditor from '@/components/custom/RichEditor.vue';
 
 const appStore = useAppStore();
 const { bool: showModal, setTrue: openModal, setFalse: closeModal } = useBoolean();
@@ -151,7 +152,7 @@ async function handleDelete(id: number) {
     </NCard>
 
     <!-- 编辑/创建 Modal -->
-    <NModal v-model:show="showModal" preset="card" :title="editTarget ? '编辑新闻' : '发布新闻'" class="w-640px">
+    <NModal v-model:show="showModal" preset="card" :title="editTarget ? '编辑新闻' : '发布新闻'" class="w-900px">
       <div class="space-y-4 py-1">
         <div>
           <div class="text-sm font-medium text-gray-700 mb-1.5">新闻标题 <span class="text-red-500">*</span></div>
@@ -176,7 +177,7 @@ async function handleDelete(id: number) {
         </div>
         <div>
           <div class="text-sm font-medium text-gray-700 mb-1.5">正文内容</div>
-          <NInput v-model:value="form.content" type="textarea" :rows="10" placeholder="支持 HTML 内容" />
+          <RichEditor v-model="form.content" placeholder="请输入新闻正文，支持图片/视频上传插入..." :height="450" />
         </div>
       </div>
       <template #footer>

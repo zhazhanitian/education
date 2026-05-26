@@ -19,7 +19,7 @@ const CATEGORY_COLOR: Record<string, string> = {
   校园动态: '#7c3aed',
 }
 
-function formatDate(d?: string) {
+function formatDate(d?: string | null) {
   if (!d) return ''
   const date = new Date(d)
   return `${date.getFullYear()} 年 ${date.getMonth() + 1} 月 ${date.getDate()} 日`
@@ -79,7 +79,7 @@ const latestList = computed(() => latestData.value?.data?.items?.filter((n: { id
               <div class="flex flex-wrap items-center gap-4 text-sm text-gray-400">
                 <span class="flex items-center gap-1.5">
                   <UIcon name="lucide:calendar" class="text-xs" />
-                  {{ formatDate(news.publishedAt) }}
+                  {{ formatDate(news?.publishedAt) }}
                 </span>
                 <span v-if="news.viewCount" class="flex items-center gap-1.5">
                   <UIcon name="lucide:eye" class="text-xs" />
@@ -95,9 +95,10 @@ const latestList = computed(() => latestData.value?.data?.items?.filter((n: { id
 
             <!-- 正文 -->
             <div class="px-8 py-6">
+              <!-- eslint-disable-next-line vue/no-v-html -->
               <div
                 v-if="news.content"
-                class="prose prose-lg max-w-none prose-headings:text-[#1B2B4B] prose-a:text-[#C0392B] prose-img:rounded-xl"
+                class="rich-content"
                 v-html="news.content"
               />
               <div v-else class="text-center py-12 text-gray-400">
