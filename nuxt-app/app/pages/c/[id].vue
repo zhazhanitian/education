@@ -148,20 +148,13 @@ function formatSize(bytes: number) {
                   <UIcon name="lucide:download" class="text-xs" /> 下载
                 </a>
               </div>
-              <object
-                :data="previewFile.url"
+              <iframe
+                :src="`${previewFile.url}#toolbar=1&navpanes=1&scrollbar=1`"
                 type="application/pdf"
                 class="w-full border-0"
                 style="min-height: 75vh;"
-              >
-                <div class="flex flex-col items-center justify-center py-16 gap-4 text-gray-400">
-                  <UIcon name="lucide:file-text" class="text-5xl text-gray-200" />
-                  <p class="text-sm">浏览器不支持内嵌预览</p>
-                  <a :href="previewFile.url" target="_blank" class="inline-flex items-center gap-2 bg-[#B01C1C] text-white px-5 py-2 text-sm hover:bg-[#8C1515] transition-colors">
-                    <UIcon name="lucide:external-link" /> 在新页面打开
-                  </a>
-                </div>
-              </object>
+                allowfullscreen
+              />
             </div>
 
             <!-- Word 下载 -->
