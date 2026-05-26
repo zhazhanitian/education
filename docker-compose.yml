@@ -1,0 +1,78 @@
+services:
+  # ── PostgreSQL 数据库 ──────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: edu-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-edu_platform}
+      POSTGRES_USER: ${POSTGRES_USER:-edu_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d
+    networks:
+      - edu-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-edu_user} -d ${POSTGRES_DB:-edu_platform}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Nuxt 前端 + 后端 API ──────────────────────────
+  nuxt-app:
+    build:
+      context: ./nuxt-app
+      dockerfile: Dockerfile
+    container_name: edu-nuxt
+    restart: unless-stopped
+    env_file:
+      - .env                         # JWT_SECRET / INIT_ADMIN_* 直接从 .env 注入
+    environment:
+      # DATABASE_URL 需要拼接，单独声明
+      DATABASE_URL: postgresql://${POSTGRES_USER:-edu_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-edu_platform}
+      UPLOAD_DIR: /app/public/uploads
+      NODE_ENV: production
+      NUXT_HOST: 0.0.0.0
+      NUXT_PORT: 3000
+    volumes:
+      - uploads_data:/app/public/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - edu-net
+
+  # ── SoybeanAdmin 管理后台 ─────────────────────────
+  admin:
+    build:
+      context: ./admin
+      dockerfile: Dockerfile
+    container_name: edu-admin
+    restart: unless-stopped
+    networks:
+      - edu-net
+
+  # ── Nginx 反向代理 ────────────────────────────────
+  nginx:
+    image: nginx:alpine
+    container_name: edu-nginx
+    restart: unless-stopped
+    ports:
+      - "${HTTP_PORT:-80}:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - uploads_data:/var/www/uploads:ro
+    depends_on:
+      - nuxt-app
+      - admin
+    networks:
+      - edu-net
+
+volumes:
+  postgres_data:
+  uploads_data:
+
+networks:
+  edu-net:
+    driver: bridge

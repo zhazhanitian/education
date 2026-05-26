@@ -1,0 +1,81 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+:root {
+  --color-gov-red: #c0392b;
+  --color-gov-blue: #1a3f7c;
+  --color-gov-blue-light: #1e5ba8;
+  --color-gov-gold: #c9a84c;
+}
+
+/* 政务网站通用字体 */
+html {
+  font-family: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 导航下拉动画 */
+.nav-dropdown-enter-active,
+.nav-dropdown-leave-active {
+  transition: all 0.2s ease;
+}
+.nav-dropdown-enter-from,
+.nav-dropdown-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+/* 新闻列表悬停 */
+.news-item:hover .news-title {
+  color: var(--color-gov-blue-light);
+}
+
+/* 数字计数动画 */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.stat-animate {
+  animation: countUp 0.6s ease forwards;
+}
+
+/* 卡片悬停抬升效果 */
+.module-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.module-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(26, 63, 124, 0.15);
+}
+
+/* ===== 滚动入场动画 ===== */
+[data-sr] {
+  opacity: 0;
+  transition-property: opacity, transform;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  transition-duration: 0.65s;
+}
+[data-sr="up"]       { transform: translateY(28px); }
+[data-sr="left"]     { transform: translateX(-28px); }
+[data-sr="right"]    { transform: translateX(28px); }
+[data-sr="scale"]    { transform: scale(0.94); }
+[data-sr="fade"]     { transform: none; }
+
+[data-sr].sr-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* 延迟档位 */
+[data-delay="100"] { transition-delay: 0.10s; }
+[data-delay="150"] { transition-delay: 0.15s; }
+[data-delay="200"] { transition-delay: 0.20s; }
+[data-delay="250"] { transition-delay: 0.25s; }
+[data-delay="300"] { transition-delay: 0.30s; }
+[data-delay="350"] { transition-delay: 0.35s; }
+[data-delay="400"] { transition-delay: 0.40s; }
+[data-delay="450"] { transition-delay: 0.45s; }
+[data-delay="500"] { transition-delay: 0.50s; }
+[data-delay="550"] { transition-delay: 0.55s; }
+[data-delay="600"] { transition-delay: 0.60s; }
+[data-delay="700"] { transition-delay: 0.70s; }

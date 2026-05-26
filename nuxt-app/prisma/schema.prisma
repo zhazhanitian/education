@@ -1,0 +1,153 @@
+// Prisma Schema - 教学成果奖申报平台
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ──────────────────────────────────────────────
+// 导航菜单
+// ──────────────────────────────────────────────
+model NavMenu {
+  id        Int        @id @default(autoincrement())
+  name      String     @db.VarChar(100)
+  type      MenuType   @default(PAGE)        // 目录 or 页面
+  slug      String?    @unique @db.VarChar(100) // 可选，不填则用 id 访问
+  sortOrder Int        @default(0)
+  isVisible Boolean    @default(true)
+  parentId  Int?
+  parent    NavMenu?   @relation("MenuTree", fields: [parentId], references: [id])
+  children  NavMenu[]  @relation("MenuTree")
+  pages     ContentPage[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@map("nav_menus")
+}
+
+enum MenuType {
+  DIRECTORY  // 目录：点击跳转第一个子菜单
+  PAGE       // 页面：点击展示对应内容
+}
+
+// ──────────────────────────────────────────────
+// 内容页（二级菜单内容，支持富文本/文件）
+// ──────────────────────────────────────────────
+model ContentPage {
+  id          Int         @id @default(autoincrement())
+  title       String      @db.VarChar(200)
+  contentType ContentType @default(RICHTEXT)
+  richText    String?     @db.Text
+  menuId      Int         @unique              // 每个菜单项对应一个内容页
+  menu        NavMenu     @relation(fields: [menuId], references: [id])
+  files       PageFile[]
+  isPublished Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("content_pages")
+}
+
+enum ContentType {
+  RICHTEXT   // 富文本 HTML
+  FILE       // 文件预览（PDF/Word/视频）
+}
+
+// ──────────────────────────────────────────────
+// 页面附件/文件
+// ──────────────────────────────────────────────
+model PageFile {
+  id          Int         @id @default(autoincrement())
+  fileName    String      @db.VarChar(255)
+  originalName String     @db.VarChar(255)
+  mimeType    String      @db.VarChar(100)
+  size        Int                              // bytes
+  url         String      @db.VarChar(500)    // 存储路径
+  fileType    FileType    @default(OTHER)
+  pageId      Int?
+  page        ContentPage? @relation(fields: [pageId], references: [id])
+  createdAt   DateTime    @default(now())
+
+  @@map("page_files")
+}
+
+enum FileType {
+  PDF
+  WORD
+  IMAGE
+  VIDEO
+  OTHER
+}
+
+// ──────────────────────────────────────────────
+// 新闻 / 动态
+// ──────────────────────────────────────────────
+model News {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(300)
+  summary     String?  @db.VarChar(500)
+  content     String   @db.Text
+  coverImage  String?  @db.VarChar(500)
+  category    String?  @db.VarChar(50)      // 新闻分类
+  isPublished Boolean  @default(false)
+  publishedAt DateTime?
+  sortOrder   Int      @default(0)
+  viewCount   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("news")
+}
+
+// ──────────────────────────────────────────────
+// 首页配置
+// ──────────────────────────────────────────────
+model HomeConfig {
+  id          Int      @id @default(autoincrement())
+  configKey   String   @unique @db.VarChar(100)  // e.g. hero_title, stats_*, banner_video
+  configValue String   @db.Text
+  configType  String   @default("text") @db.VarChar(20) // text | image | video | json
+  label       String?  @db.VarChar(100)
+  updatedAt   DateTime @updatedAt
+
+  @@map("home_configs")
+}
+
+// ──────────────────────────────────────────────
+// 核心数据统计（首页数字展示）
+// ──────────────────────────────────────────────
+model HomeStat {
+  id        Int    @id @default(autoincrement())
+  label     String @db.VarChar(100)   // e.g. 获奖成果
+  value     String @db.VarChar(50)    // e.g. 32项
+  icon      String @db.VarChar(100)   // iconify 图标名
+  sortOrder Int    @default(0)
+  isVisible Boolean @default(true)
+
+  @@map("home_stats")
+}
+
+// ──────────────────────────────────────────────
+// 管理员账号
+// ──────────────────────────────────────────────
+model AdminUser {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique @db.VarChar(50)
+  passwordHash String   @db.VarChar(255)
+  realName     String?  @db.VarChar(50)
+  role         AdminRole @default(EDITOR)
+  isActive     Boolean  @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("admin_users")
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+  EDITOR
+}
