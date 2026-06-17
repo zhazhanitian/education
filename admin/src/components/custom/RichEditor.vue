@@ -27,11 +27,45 @@ const toolbarRef = ref<HTMLDivElement | null>(null)
 const editorRef = ref<HTMLDivElement | null>(null)
 let editor: IDomEditor | null = null
 
-/** 获取上传接口基础地址 */
-function getUploadBaseUrl() {
+/** 后端静态资源根地址：http://host/api/admin → http://host */
+function getStaticBase() {
   const base = import.meta.env.VITE_SERVICE_BASE_URL as string || ''
-  // 去掉末尾 /api/admin，拼成 /proxy-default/files/upload
   return base.replace(/\/api\/admin\/?$/, '')
+}
+
+/**
+ * 编辑器展示用：把 HTML 里的相对 /uploads/ 路径替换为绝对 URL
+ * 数据库仍存相对路径，只在渲染时转换，换服务器地址不影响存储数据
+ */
+function injectStaticBase(html: string) {
+  if (!html) return html
+  const base = getStaticBase()
+  return html.replace(/(src|href)="(\/uploads\/)/g, `$1="${base}$2`)
+}
+
+/**
+ * 保存用：把编辑器 HTML 里的绝对 URL 还原为相对路径
+ * 确保数据库里始终存的是 /uploads/... 相对路径
+ */
+function stripStaticBase(html: string) {
+  if (!html) return html
+  const base = getStaticBase()
+  if (!base) return html
+  return html.replaceAll(`src="${base}/uploads/`, 'src="/uploads/')
+    .replaceAll(`href="${base}/uploads/`, 'href="/uploads/')
+}
+
+/** 获取上传接口地址
+ *  - 开启代理（VITE_HTTP_PROXY=Y）：走 /proxy-default，Vite 转发到 localhost:3000/api/admin，无跨域
+ *  - 关闭代理（生产/远程）：直接用 VITE_SERVICE_BASE_URL（已含 /api/admin）
+ */
+function getUploadUrl() {
+  const isProxy = import.meta.env.VITE_HTTP_PROXY === 'Y'
+  if (isProxy) {
+    return '/proxy-default/files/upload'
+  }
+  const base = import.meta.env.VITE_SERVICE_BASE_URL as string || ''
+  return `${base}/files/upload`
 }
 
 /** 自定义图片上传 */
@@ -42,15 +76,15 @@ async function customUploadImage(
   const token = localStg.get('token') || ''
   const fd = new FormData()
   fd.append('file', file)
-  const base = getUploadBaseUrl()
-  const res = await fetch(`${base}/files/upload`, {
+  const res = await fetch(getUploadUrl(), {
     method: 'POST',
     headers: { Authorization: `Bearer ${token}` },
     body: fd,
   })
   const json = await res.json()
   if (json.code === 0 && json.data?.url) {
-    insertFn(json.data.url, file.name, '')
+    // 插入时用绝对 URL 供编辑器展示，保存时会自动 stripStaticBase 还原为相对路径
+    insertFn(`${getStaticBase()}${json.data.url}`, file.name, '')
   } else {
     window.$message?.error('图片上传失败')
   }
@@ -64,15 +98,14 @@ async function customUploadVideo(
   const token = localStg.get('token') || ''
   const fd = new FormData()
   fd.append('file', file)
-  const base = getUploadBaseUrl()
-  const res = await fetch(`${base}/files/upload`, {
+  const res = await fetch(getUploadUrl(), {
     method: 'POST',
     headers: { Authorization: `Bearer ${token}` },
     body: fd,
   })
   const json = await res.json()
   if (json.code === 0 && json.data?.url) {
-    insertFn(json.data.url, '')
+    insertFn(`${getStaticBase()}${json.data.url}`, '')
   } else {
     window.$message?.error('视频上传失败')
   }
@@ -85,7 +118,9 @@ function initEditor() {
     placeholder: props.placeholder,
     onChange(e: IDomEditor) {
       const html = e.getHtml()
-      emit('update:modelValue', html === '<p><br></p>' ? '' : html)
+      // 保存前把绝对 URL 还原为相对路径，数据库始终存 /uploads/...
+      const clean = html === '<p><br></p>' ? '' : stripStaticBase(html)
+      emit('update:modelValue', clean)
     },
     MENU_CONF: {
       uploadImage: {
@@ -99,7 +134,8 @@ function initEditor() {
 
   editor = createEditor({
     selector: editorRef.value,
-    html: props.modelValue || '',
+    // 加载时把相对路径替换为绝对 URL，历史数据和新数据都能正常回显
+    html: injectStaticBase(props.modelValue || ''),
     config: editorConfig,
     mode: 'default',
   })
@@ -122,9 +158,10 @@ watch(
   () => props.modelValue,
   (val) => {
     if (!editor || editor.isDestroyed) return
-    const current = editor.getHtml()
+    // 比较时用还原后的值，避免因 base 注入导致死循环更新
+    const current = stripStaticBase(editor.getHtml())
     if (val !== current) {
-      editor.setHtml(val || '')
+      editor.setHtml(injectStaticBase(val || ''))
     }
   },
 )

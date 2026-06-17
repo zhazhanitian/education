@@ -23,7 +23,12 @@ export default defineEventHandler(async (event) => {
   try {
     const buffer = await readFile(filePath)
     setHeader(event, 'Content-Type', 'application/pdf')
+    // inline 强制浏览器预览而非下载
     setHeader(event, 'Content-Disposition', 'inline')
+    // 版权保护：禁止缓存到本地、禁止嗅探类型
+    setHeader(event, 'Cache-Control', 'no-store, no-cache, must-revalidate')
+    setHeader(event, 'X-Content-Type-Options', 'nosniff')
+    setHeader(event, 'X-Robots-Tag', 'noindex, noarchive')
     return buffer
   } catch {
     throw createError({ statusCode: 404, message: '文件不存在' })

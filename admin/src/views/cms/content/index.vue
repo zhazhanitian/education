@@ -266,7 +266,7 @@ function handleReset() { Object.assign(searchParams, { title: '', menuId: undefi
                 multiple
                 :custom-request="handleCustomUpload"
                 :show-file-list="false"
-                accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.mp4,.mov,.avi,.webm,.jpg,.jpeg,.png,.gif,.webp"
+                accept=".pdf,.jpg,.jpeg,.png,.gif,.webp,.mp4,.mov,.webm"
               >
                 <NUploadDragger>
                   <div class="py-6 text-center">
@@ -274,7 +274,7 @@ function handleReset() { Object.assign(searchParams, { title: '', menuId: undefi
                       <icon-ic-round-cloud-upload />
                     </NIcon>
                     <p class="text-sm text-gray-500 mb-1">点击或拖拽文件到此处上传</p>
-                    <p class="text-xs text-gray-400">支持 PDF、Word、Excel、PPT、视频、图片，单文件最大 100MB</p>
+                    <p class="text-xs text-gray-400">支持 PDF、图片、视频，单文件最大 100MB</p>
                   </div>
                 </NUploadDragger>
               </NUpload>
@@ -309,7 +309,7 @@ function handleReset() { Object.assign(searchParams, { title: '', menuId: undefi
               </div>
 
               <NAlert v-else type="info" :show-icon="false" class="mt-2">
-                上传后文件将在前端页面内嵌预览（PDF/Word 使用在线查看器，视频直接播放）
+                上传后文件将在前端页面内嵌预览（PDF 使用在线查看器，视频直接播放）
               </NAlert>
             </div>
           </NFormItem>

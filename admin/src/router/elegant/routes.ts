@@ -51,6 +51,18 @@ export const generatedRoutes: GeneratedRoute[] = [
     },
     children: [
       {
+        name: 'cms_nav',
+        path: '/cms/nav',
+        component: 'view.cms_nav',
+        meta: {
+          title: '导航菜单',
+          icon: 'mdi:menu',
+          order: 1,
+          i18nKey: 'route.cms_nav',
+          roles: ['R_SUPER', 'R_ADMIN']
+        }
+      },
+      {
         name: 'cms_content',
         path: '/cms/content',
         component: 'view.cms_content',
@@ -59,17 +71,6 @@ export const generatedRoutes: GeneratedRoute[] = [
           icon: 'mdi:file-document-outline',
           order: 2,
           i18nKey: 'route.cms_content'
-        }
-      },
-      {
-        name: 'cms_nav',
-        path: '/cms/nav',
-        component: 'view.cms_nav',
-        meta: {
-          title: '导航菜单',
-          icon: 'mdi:menu',
-          order: 1,
-          i18nKey: 'route.cms_nav'
         }
       },
       {
@@ -90,23 +91,13 @@ export const generatedRoutes: GeneratedRoute[] = [
     path: '/config',
     component: 'layout.base',
     meta: {
-      title: '系统配置',
-      icon: 'mdi:cog-outline',
+      title: '系统管理',
+      icon: 'mdi:shield-account-outline',
       order: 3,
-      i18nKey: 'route.config'
+      i18nKey: 'route.config',
+      roles: ['R_SUPER', 'R_ADMIN']
     },
     children: [
-      {
-        name: 'config_files',
-        path: '/config/files',
-        component: 'view.config_files',
-        meta: {
-          title: '文件管理',
-          icon: 'mdi:folder-multiple-outline',
-          order: 2,
-          i18nKey: 'route.config_files'
-        }
-      },
       {
         name: 'config_home',
         path: '/config/home',
@@ -115,7 +106,32 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: '首页配置',
           icon: 'mdi:home-edit-outline',
           order: 1,
-          i18nKey: 'route.config_home'
+          i18nKey: 'route.config_home',
+          roles: ['R_SUPER', 'R_ADMIN']
+        }
+      },
+      {
+        name: 'config_files',
+        path: '/config/files',
+        component: 'view.config_files',
+        meta: {
+          title: '文件管理',
+          icon: 'mdi:folder-multiple-outline',
+          order: 2,
+          i18nKey: 'route.config_files',
+          roles: ['R_SUPER', 'R_ADMIN']
+        }
+      },
+      {
+        name: 'manage_users',
+        path: '/manage/users',
+        component: 'view.manage_users',
+        meta: {
+          title: '用户管理',
+          icon: 'mdi:account-group-outline',
+          order: 3,
+          i18nKey: 'route.manage_users',
+          roles: ['R_SUPER', 'R_ADMIN']
         }
       }
     ]

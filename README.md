@@ -23,6 +23,24 @@
 └── .env.example       # 环境变量模板
 ```
 
+## 数据库初始化说明
+
+`postgres/init/` 目录下的 SQL 脚本会被 PostgreSQL 官方镜像在**数据卷首次创建时**自动执行（通过 Docker 的 `/docker-entrypoint-initdb.d` 机制），**无需手动运行**。
+
+| 文件 | 作用 |
+|------|------|
+| `01_seed.sql` | 写入初始导航菜单、首页配置、核心统计数据、超管账号占位符 |
+
+> **注意事项**
+> - 脚本仅在数据卷**第一次初始化**时执行。如果 `postgres_data` 卷已存在，重启容器不会重复执行。
+> - 表结构（DDL）由 Prisma 在应用启动时通过 `pnpm db:push` / `prisma migrate` 管理，`init/` 目录只负责种子数据（DML）。
+> - 换服务器部署时，若需要重新初始化，删除旧数据卷即可：
+>   ```bash
+>   docker compose down -v   # -v 同时删除数据卷，触发下次启动重新初始化
+>   docker compose up -d --build
+>   ```
+> - 超管账号 `admin` 的密码占位符 `$2b$10$placeholder_replace_on_first_login` 需要应用层在首次登录时完成 bcrypt 替换，**切勿直接用于生产**，首次部署后请立即通过管理后台修改密码。
+
 ## 快速部署（生产）
 
 ```bash

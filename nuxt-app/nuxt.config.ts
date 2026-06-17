@@ -14,9 +14,9 @@ export default defineNuxtConfig({
     dirs: [{ path: '~/components', pathPrefix: false }]
   },
 
-  // 关闭 Google Fonts（国内无法访问）
+  // 关闭所有外部字体提供商（国内网络无法访问）
   fonts: {
-    providers: { google: false, googleicons: false }
+    providers: { google: false, googleicons: false, fontsource: false, bunny: false }
   },
 
   routeRules: {
@@ -31,6 +31,12 @@ export default defineNuxtConfig({
     uploadDir: process.env.UPLOAD_DIR || './public/uploads',
     public: {
       apiBase: '/api'
+    }
+  },
+
+  vite: {
+    optimizeDeps: {
+      include: ['pdfjs-dist']
     }
   },
 

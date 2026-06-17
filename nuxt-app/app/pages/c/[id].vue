@@ -48,7 +48,12 @@ const parentMenu = computed(() => {
 const videoFiles = computed(() => page.value?.files?.filter((f: { fileType: string }) => f.fileType === 'VIDEO') ?? [])
 const previewFile = computed(() => page.value?.files?.find((f: { fileType: string }) => f.fileType === 'PDF' || f.fileType === 'WORD'))
 const images = computed(() => page.value?.files?.filter((f: { fileType: string }) => f.fileType === 'IMAGE') ?? [])
-const otherFiles = computed(() => page.value?.files?.filter((f: { fileType: string }) => !['IMAGE', 'VIDEO'].includes(f.fileType)) ?? [])
+// 只保留 OTHER 类型，IMAGE/VIDEO/PDF/WORD 均有专属展示区域
+const otherFiles = computed(() =>
+  page.value?.files?.filter((f: { fileType: string }) =>
+    !['IMAGE', 'VIDEO', 'PDF', 'WORD'].includes(f.fileType)
+  ) ?? []
+)
 
 function fileIcon(type: string) {
   const map: Record<string, string> = { PDF: 'lucide:file-text', WORD: 'lucide:file-type', VIDEO: 'lucide:video', IMAGE: 'lucide:image', OTHER: 'lucide:paperclip' }
@@ -139,74 +144,94 @@ function formatSize(bytes: number) {
               />
             </div>
 
-            <!-- PDF 内嵌 -->
+            <!-- PDF 内嵌（版权保护：PDF.js canvas 渲染，完全屏蔽右键另存） -->
             <div v-if="page.contentType === 'FILE' && previewFile?.fileType === 'PDF'" class="bg-white border border-gray-200 overflow-hidden">
               <div class="flex items-center gap-2 px-5 py-3 border-b border-gray-100 bg-gray-50">
                 <UIcon name="lucide:file-text" class="text-[#B01C1C]" />
-                <span class="text-sm text-gray-700 font-medium">{{ previewFile.originalName }}</span>
-                <a :href="previewFile.url" target="_blank" class="ml-auto text-xs text-[#B01C1C] hover:underline flex items-center gap-1">
-                  <UIcon name="lucide:download" class="text-xs" /> 下载
-                </a>
+                <span class="text-sm text-gray-700 font-medium truncate flex-1">{{ previewFile.originalName }}</span>
+                <span class="text-xs text-gray-400 flex items-center gap-1 shrink-0">
+                  <UIcon name="lucide:shield-check" class="text-xs" /> 版权所有，禁止下载
+                </span>
               </div>
-              <iframe
-                :src="`${previewFile.url}#toolbar=1&navpanes=1&scrollbar=1`"
-                type="application/pdf"
-                class="w-full border-0"
-                style="min-height: 75vh;"
-                allowfullscreen
-              />
+              <ClientOnly>
+                <PdfViewer :src="`/api/files/preview?url=${encodeURIComponent(previewFile.url)}`" />
+              </ClientOnly>
             </div>
 
-            <!-- Word 下载 -->
+            <!-- Word 文件（版权保护：仅提示，禁止下载） -->
             <div v-if="page.contentType === 'FILE' && previewFile?.fileType === 'WORD'" class="bg-white border border-gray-200 p-8 text-center">
               <UIcon name="lucide:file-type" class="text-5xl text-blue-300 mb-4" />
               <p class="text-gray-700 font-medium mb-2">{{ previewFile.originalName }}</p>
-              <p class="text-sm text-gray-400 mb-5">Word 文档需下载后查看</p>
-              <a :href="previewFile.url" download class="inline-flex items-center gap-2 bg-[#B01C1C] text-white px-6 py-2 text-sm hover:bg-[#8C1515] transition-colors">
-                <UIcon name="lucide:download" /> 下载文件
-              </a>
+              <p class="text-sm text-gray-400">该文件受版权保护，暂不支持下载</p>
             </div>
 
-            <!-- 视频 -->
+            <!-- 视频（版权保护：禁止下载、禁止右键） -->
             <div v-if="videoFiles.length" class="space-y-4 mt-0">
               <div v-for="video in videoFiles" :key="video.id" class="bg-white border border-gray-200 overflow-hidden">
                 <div class="flex items-center gap-2 px-5 py-3 border-b border-gray-100 bg-gray-50">
                   <UIcon name="lucide:video" class="text-[#B01C1C]" />
                   <span class="text-sm text-gray-700 font-medium">{{ video.originalName }}</span>
+                  <span class="ml-auto text-xs text-gray-400 flex items-center gap-1">
+                    <UIcon name="lucide:shield-check" class="text-xs" /> 版权所有
+                  </span>
                 </div>
-                <video :src="video.url" controls preload="metadata" class="w-full max-h-[500px] bg-black">您的浏览器不支持视频播放</video>
+                <video
+                  :src="video.url"
+                  controls
+                  preload="metadata"
+                  controlslist="nodownload nofullscreen noremoteplayback"
+                  disablepictureinpicture
+                  class="w-full max-h-[500px] bg-black"
+                  oncontextmenu="return false"
+                >您的浏览器不支持视频播放</video>
               </div>
             </div>
 
-            <!-- 图片 -->
-            <div v-if="images.length" class="bg-white border border-gray-200 border-t-0 p-6">
-              <h3 class="text-sm font-bold text-gray-700 mb-4 flex items-center gap-2">
-                <UIcon name="lucide:image" class="text-[#B01C1C]" /> 相关图片
-              </h3>
-              <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                <a v-for="img in images" :key="img.id" :href="img.url" target="_blank" class="aspect-[4/3] rounded overflow-hidden bg-gray-100 hover:opacity-90 transition-opacity">
-                  <img :src="img.url" :alt="img.originalName" class="w-full h-full object-cover" />
-                </a>
+            <!-- 图片（版权保护：全宽展示，不可点击跳转，不可另存） -->
+            <div v-if="images.length" class="bg-white border border-gray-200 border-t-0 overflow-hidden">
+              <div class="flex items-center gap-2 px-5 py-3 border-b border-gray-100 bg-gray-50">
+                <UIcon name="lucide:image" class="text-[#B01C1C]" />
+                <span class="text-sm font-medium text-gray-700 flex-1">相关图片</span>
+                <span class="text-xs text-gray-400 flex items-center gap-1 shrink-0">
+                  <UIcon name="lucide:shield-check" class="text-xs" /> 版权所有，禁止下载
+                </span>
+              </div>
+              <div class="divide-y divide-gray-100">
+                <div
+                  v-for="img in images"
+                  :key="img.id"
+                  class="w-full bg-gray-50 select-none overflow-hidden"
+                >
+                  <img
+                    :src="img.url"
+                    :alt="img.originalName"
+                    class="w-full h-auto block pointer-events-none select-none"
+                    draggable="false"
+                  />
+                </div>
               </div>
             </div>
 
-            <!-- 附件下载 -->
+            <!-- 附件列表（版权保护：仅展示文件名，禁止下载） -->
             <div v-if="otherFiles.length" class="bg-white border border-gray-200 border-t-0 p-6">
               <h3 class="text-sm font-bold text-gray-700 mb-4 flex items-center gap-2">
-                <UIcon name="lucide:paperclip" class="text-[#B01C1C]" /> 附件下载
+                <UIcon name="lucide:paperclip" class="text-[#B01C1C]" /> 相关附件
               </h3>
               <div class="space-y-2">
-                <a
-                  v-for="file in otherFiles" :key="file.id" :href="file.url" download
-                  class="flex items-center gap-3 p-3 border border-gray-100 hover:border-[#B01C1C]/30 hover:bg-red-50 transition-all group"
+                <div
+                  v-for="file in otherFiles"
+                  :key="file.id"
+                  class="flex items-center gap-3 p-3 border border-gray-100 bg-gray-50/50"
                 >
                   <UIcon :name="fileIcon(file.fileType)" class="text-[#B01C1C] flex-shrink-0" />
                   <div class="flex-1 min-w-0">
-                    <p class="text-sm text-gray-700 truncate group-hover:text-[#B01C1C]">{{ file.originalName }}</p>
+                    <p class="text-sm text-gray-700 truncate">{{ file.originalName }}</p>
                     <p class="text-xs text-gray-400">{{ formatSize(file.size) }}</p>
                   </div>
-                  <UIcon name="lucide:download" class="text-gray-300 group-hover:text-[#B01C1C] flex-shrink-0" />
-                </a>
+                  <span class="text-xs text-gray-400 flex items-center gap-1 flex-shrink-0">
+                    <UIcon name="lucide:shield-check" class="text-xs" /> 版权所有
+                  </span>
+                </div>
               </div>
             </div>
           </template>

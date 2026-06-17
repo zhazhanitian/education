@@ -49,7 +49,14 @@ html {
 }
 
 /* ===== 富文本内容样式 ===== */
-.rich-content { font-size: 0.9375rem; line-height: 1.85; color: #374151; }
+.rich-content {
+  font-size: 0.9375rem;
+  line-height: 1.85;
+  color: #374151;
+  /* 版权保护：禁止选中文本 */
+  -webkit-user-select: none;
+  user-select: none;
+}
 .rich-content h1 { font-size: 1.5rem; font-weight: 700; color: #111827; margin: 1.6em 0 0.8em; border-left: 4px solid #B01C1C; padding-left: 12px; }
 .rich-content h2 { font-size: 1.25rem; font-weight: 700; color: #111827; margin: 1.4em 0 0.7em; border-left: 4px solid #B01C1C; padding-left: 12px; }
 .rich-content h3 { font-size: 1.1rem; font-weight: 600; color: #1f2937; margin: 1.2em 0 0.6em; }
@@ -72,6 +79,26 @@ html {
 .rich-content code { font-family: monospace; font-size: 0.875em; background: #f3f4f6; padding: 2px 5px; border-radius: 3px; color: #B01C1C; }
 .rich-content pre code { background: none; color: inherit; padding: 0; }
 .rich-content hr { border: none; border-top: 1px solid #e5e7eb; margin: 1.5em 0; }
+
+/* ===== 版权保护：禁止拖拽、选中图片/视频 ===== */
+img, video {
+  -webkit-user-drag: none;
+  user-drag: none;
+  -webkit-user-select: none;
+  user-select: none;
+  pointer-events: none; /* 防止图片被单独点击另存 */
+}
+
+/* 内容区链接和视频需要 pointer-events 可用，单独放开 */
+a img { pointer-events: auto; }
+video { pointer-events: auto; } /* 视频控件需可点击 */
+
+/* 富文本内图片同样保护 */
+.rich-content img {
+  -webkit-user-drag: none;
+  user-drag: none;
+  pointer-events: none;
+}
 
 /* ===== 滚动入场动画 ===== */
 [data-sr] {

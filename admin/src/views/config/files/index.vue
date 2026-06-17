@@ -86,7 +86,18 @@ const columns = [
           <NButton size="small" type="primary">预览</NButton>
         </a>
         <NPopconfirm onPositiveClick={() => remove(row.id)}>
-          {{ default: () => '确认删除？', trigger: () => <NButton size="small" type="error">删除</NButton> }}
+          {{
+            default: () => (
+              <div style="max-width:240px">
+                <div style="font-weight:600;color:#B01C1C;margin-bottom:4px">⚠️ 删除前请确认</div>
+                <div style="font-size:12px;color:#555;line-height:1.6">
+                  若该文件已被页面附件或富文本内容引用，删除后对应位置将无法显示。
+                  <br />确认不再使用后再删除。
+                </div>
+              </div>
+            ),
+            trigger: () => <NButton size="small" type="error">删除</NButton>
+          }}
         </NPopconfirm>
       </NSpace>
     )
@@ -114,13 +125,9 @@ const columns = [
     <!-- 表格 -->
     <NCard title="文件管理" :bordered="false" size="small" class="card-wrapper sm:flex-1-hidden">
       <template #header-extra>
-        <NSpace>
-          <NAlert type="info" style="padding: 4px 10px; font-size: 12px;">
-            支持 PDF、Word、图片、视频（≤50MB）
-          </NAlert>
-          <input ref="fileInput" type="file" class="hidden" @change="uploadFile" />
-          <NButton type="primary" size="small" :loading="uploading" @click="fileInput?.click()">上传文件</NButton>
-        </NSpace>
+        <NAlert type="warning" style="padding: 4px 10px; font-size: 12px;">
+          文件由各内容页上传，此处仅供查看与清理，删除前请确认文件未被引用
+        </NAlert>
       </template>
       <NDataTable
         :loading="loading"

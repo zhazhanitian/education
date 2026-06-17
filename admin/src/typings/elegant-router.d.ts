@@ -27,6 +27,7 @@ declare module "@elegant-router/types" {
     "config": "/config";
     "config_files": "/config/files";
     "config_home": "/config/home";
+    "manage_users": "/manage/users";
     "home": "/home";
     "iframe-page": "/iframe-page/:url";
     "login": "/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?";
@@ -95,6 +96,7 @@ declare module "@elegant-router/types" {
     | "cms_news"
     | "config_files"
     | "config_home"
+    | "manage_users"
     | "home"
   >;
 

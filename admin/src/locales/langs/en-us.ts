@@ -233,9 +233,12 @@ const local: App.I18n.Schema = {
     cms: 'Content Management',
     cms_nav: 'Navigation Menu',
     cms_content: 'Page Content',
-    config: 'System Config',
+    cms_news: 'News',
+    config: 'System Management',
     config_home: 'Homepage Config',
-    config_files: 'File Management'
+    config_files: 'File Management',
+    manage: 'System Management',
+    manage_users: 'User Management'
   },
   page: {
     login: {

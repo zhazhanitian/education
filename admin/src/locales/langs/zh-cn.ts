@@ -230,9 +230,11 @@ const local: App.I18n.Schema = {
     cms_nav: '导航菜单',
     cms_content: '页面内容',
     cms_news: '新闻动态',
-    config: '系统配置',
+    config: '系统管理',
     config_home: '首页配置',
-    config_files: '文件管理'
+    config_files: '文件管理',
+    manage: '系统管理',
+    manage_users: '用户管理'
   },
   page: {
     login: {
