@@ -1,0 +1,778 @@
+/*
+ * ycit-homepage.css  v3.0
+ * 盐城工学院教学成果申报网站 — 首页完整重设计
+ * 2026-06-21
+ *
+ * 视觉节奏：
+ *   深蓝导航 → 深蓝 Hero Banner（平滑承接）
+ *   → 白色主内容区（清爽对比）
+ *   → 浅蓝灰数据看板（缓和过渡）
+ *   → 深蓝 Footer（收尾）
+ *
+ * 所有选择器以 .ycit-redesign 作用域隔离，不污染其他页面
+ */
+
+
+/* ══════════════════════════════════════════════
+   1. 设计 Token
+   ══════════════════════════════════════════════ */
+:root {
+  --ycit-blue:      #214d9c;
+  --ycit-blue-dk:   #0f2554;
+  --ycit-blue-mid:  #163070;
+  --ycit-blue-lt:   #3d6fca;
+  --ycit-gold:      #e8a020;
+  --ycit-gold-lt:   #f5c84a;
+  --ycit-teal:      #0e9e7e;
+  --ycit-bg-page:   #f0f4fa;
+  --ycit-bg-stats:  #eef2f9;
+  --ycit-surface:   #ffffff;
+  --ycit-text-h:    #1a2440;
+  --ycit-text-b:    #4a5568;
+  --ycit-text-m:    #8899b0;
+  --ycit-border:    #dde5f0;
+  --ycit-radius:    8px;
+  --ycit-radius-lg: 12px;
+  --ycit-shadow-sm: 0 2px 10px rgba(33,77,156,0.08);
+  --ycit-shadow-md: 0 8px 28px rgba(33,77,156,0.14);
+  --ycit-shadow-lg: 0 20px 56px rgba(33,77,156,0.20);
+  --ycit-t:         0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+/* ══════════════════════════════════════════════
+   2. 页面底色
+   ══════════════════════════════════════════════ */
+body.ycit-redesign {
+  background: var(--ycit-bg-page);
+}
+.ycit-redesign #mid {
+  background: #fff;
+}
+
+
+/* ══════════════════════════════════════════════
+   3. 导航栏 — 品牌深蓝渐变
+   ══════════════════════════════════════════════ */
+.ycit-redesign #bot {
+  background: linear-gradient(90deg,
+    var(--ycit-blue-dk) 0%,
+    var(--ycit-blue)    55%,
+    var(--ycit-blue-lt) 100%) !important;
+  height: 50px !important;
+  line-height: 50px !important;
+  box-shadow: 0 4px 16px rgba(15, 37, 84, 0.32) !important;
+}
+
+.ycit-redesign .nav {
+  float: none !important;
+  margin: 0 !important;
+  width: 100%;
+}
+.ycit-redesign .nav > ul {
+  display: flex !important;
+  justify-content: center !important;
+  height: 50px;
+  overflow: visible !important;
+}
+.ycit-redesign .nav > ul > li {
+  flex: 1 !important;
+  width: auto !important;
+  height: 50px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: transparent !important;
+  position: relative !important;
+  transition: background var(--ycit-t) !important;
+}
+/* 底部金色弹出指示线 */
+.ycit-redesign .nav > ul > li::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 48%;
+  height: 3px;
+  background: var(--ycit-gold);
+  border-radius: 3px 3px 0 0;
+  transform: translateX(-50%) scaleX(0);
+  transform-origin: center bottom;
+  transition: transform 0.26s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.ycit-redesign .nav > ul > li:hover::after {
+  transform: translateX(-50%) scaleX(1);
+}
+.ycit-redesign .nav > ul > li:hover {
+  background: rgba(255,255,255,0.09) !important;
+}
+.ycit-redesign .nav > ul > li > a {
+  color: rgba(255,255,255,0.88) !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  letter-spacing: 1px !important;
+  padding: 0 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  height: 50px !important;
+  transition: color var(--ycit-t) !important;
+}
+.ycit-redesign .nav > ul > li:hover > a {
+  color: #fff !important;
+}
+/* 下拉菜单 */
+.ycit-redesign .nav > ul > li > ul {
+  top: 50px !important;
+  background: var(--ycit-blue-mid) !important;
+  border: none !important;
+  border-top: 2px solid var(--ycit-gold) !important;
+  border-radius: 0 0 var(--ycit-radius) var(--ycit-radius) !important;
+  box-shadow: 0 10px 32px rgba(15,37,84,0.40) !important;
+  padding: 4px 0;
+  min-width: 160px;
+}
+.ycit-redesign .nav > ul > li > ul > li {
+  width: 100% !important;
+  height: 40px !important;
+  flex: none !important;
+  display: flex !important;
+  align-items: center !important;
+}
+.ycit-redesign .nav > ul > li > ul > li::after { display: none; }
+.ycit-redesign .nav > ul > li > ul > li > a {
+  font-size: 14px !important;
+  color: rgba(255,255,255,0.76) !important;
+  padding: 0 20px !important;
+  height: 40px !important;
+  letter-spacing: 0 !important;
+  width: 100%;
+  justify-content: flex-start !important;
+  transition: background var(--ycit-t), color var(--ycit-t) !important;
+}
+.ycit-redesign .nav > ul > li > ul > li:hover > a {
+  color: #fff !important;
+  background: rgba(255,255,255,0.08) !important;
+}
+
+
+/* ══════════════════════════════════════════════
+   4. Hero Banner — 承接导航深蓝，视觉过渡桥梁
+   ══════════════════════════════════════════════ */
+.ycit-redesign .ycit-hero-banner {
+  width: 100% !important;
+  display: block !important;
+  background: linear-gradient(135deg, #0f2554 0%, #163070 38%, #214d9c 100%) !important;
+  padding: 36px 0 40px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  box-sizing: border-box !important;
+}
+/* 入场动画：仅在 JS 运行时触发，不影响默认可见性 */
+.ycit-redesign .ycit-hero-banner.ycit-anim-start {
+  opacity: 0 !important;
+  transform: translateY(-8px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.ycit-redesign .ycit-hero-banner.ycit-anim-start.is-visible {
+  opacity: 1 !important;
+  transform: translateY(0);
+}
+/* 点阵背景纹理 */
+.ycit-redesign .ycit-hero-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.07) 1px, transparent 0);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+
+.ycit-redesign .ycit-banner-inner {
+  width: 1300px !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  padding: 0 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  position: relative !important;
+  z-index: 1 !important;
+  box-sizing: border-box !important;
+}
+
+/* 左侧文字区 */
+.ycit-redesign .ycit-banner-info {
+  flex: 1 !important;
+}
+.ycit-redesign .ycit-banner-eyebrow {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #e8a020 !important;
+  margin-bottom: 14px;
+}
+.ycit-redesign .ycit-banner-dot {
+  display: inline-block !important;
+  width: 6px;
+  height: 6px;
+  background: #e8a020 !important;
+  border-radius: 50%;
+  flex-shrink: 0;
+  animation: ycitDotPulse 2s ease-in-out infinite;
+}
+@keyframes ycitDotPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(232,160,32,0.5); }
+  50%       { box-shadow: 0 0 0 5px rgba(232,160,32,0); }
+}
+
+.ycit-redesign .ycit-banner-title {
+  font-size: 26px !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+  line-height: 1.5 !important;
+  margin: 0 0 20px !important;
+  letter-spacing: 0.5px;
+}
+.ycit-redesign .ycit-banner-tags {
+  display: flex !important;
+  gap: 8px;
+}
+.ycit-redesign .ycit-banner-tags span {
+  font-size: 13px !important;
+  color: rgba(255,255,255,0.85) !important;
+  border: 1px solid rgba(255,255,255,0.28) !important;
+  padding: 5px 16px;
+  border-radius: 20px;
+  letter-spacing: 1.5px;
+  transition: background var(--ycit-t), border-color var(--ycit-t);
+}
+.ycit-redesign .ycit-banner-tags span:hover {
+  background: rgba(255,255,255,0.10) !important;
+  border-color: rgba(255,255,255,0.50) !important;
+}
+
+/* 右侧数字区 */
+.ycit-redesign .ycit-banner-nums {
+  display: flex !important;
+  align-items: center !important;
+  flex-shrink: 0 !important;
+  margin-left: 60px !important;
+}
+.ycit-redesign .ycit-bn-item {
+  text-align: center;
+  padding: 0 40px;
+}
+.ycit-redesign .ycit-bn-divider {
+  width: 1px;
+  height: 52px;
+  background: rgba(255,255,255,0.18);
+  flex-shrink: 0;
+}
+.ycit-redesign .ycit-bn-num {
+  display: block !important;
+  font-size: 34px !important;
+  font-weight: 800 !important;
+  color: #e8a020 !important;
+  line-height: 1.2;
+  letter-spacing: -1px;
+}
+.ycit-redesign .ycit-bn-num em {
+  font-style: normal;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.ycit-redesign .ycit-bn-label {
+  display: block !important;
+  font-size: 12px;
+  color: rgba(255,255,255,0.72) !important;
+  margin-top: 5px;
+  letter-spacing: 0.5px;
+}
+
+
+/* ══════════════════════════════════════════════
+   5. 主内容区 — 白色背景
+   ══════════════════════════════════════════════ */
+.ycit-redesign #main {
+  background: #ffffff !important;
+  padding: 44px 0 52px !important;
+  overflow: hidden !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* 两列网格 — float 布局兼容 CMS */
+.ycit-redesign .ycit-content-grid {
+  overflow: hidden !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+/* 入场动画：仅在 JS 运行时触发 */
+.ycit-redesign .ycit-content-grid.ycit-anim-start {
+  opacity: 0 !important;
+  transform: translateY(16px);
+  transition: opacity 0.65s ease 0.15s, transform 0.65s ease 0.15s;
+}
+.ycit-redesign .ycit-content-grid.ycit-anim-start.is-visible {
+  opacity: 1 !important;
+  transform: translateY(0);
+}
+
+.ycit-redesign .ycit-video-col {
+  float: left !important;
+  width: 700px !important;
+  display: block !important;
+}
+.ycit-redesign .ycit-right-col {
+  margin-left: 732px !important;
+  overflow: hidden !important;
+  display: block !important;
+}
+/* 清除 float 子元素 */
+.ycit-redesign .ycit-content-grid::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+
+/* ══════════════════════════════════════════════
+   6. 通用区块标题
+   ══════════════════════════════════════════════ */
+.ycit-block-hd {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 14px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--ycit-border);
+  position: relative;
+}
+/* 底部蓝色短线 */
+.ycit-block-hd::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 52px;
+  height: 2px;
+  background: var(--ycit-blue);
+  border-radius: 2px;
+}
+.ycit-block-hd--sm {
+  margin-top: 28px;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.ycit-eyebrow {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--ycit-gold);
+  background: rgba(232,160,32,0.10);
+  border: 1px solid rgba(232,160,32,0.28);
+  padding: 2px 8px;
+  border-radius: 4px;
+  line-height: 18px;
+  flex-shrink: 0;
+}
+.ycit-block-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ycit-text-h);
+  margin: 0;
+  flex: 1;
+  letter-spacing: 0.5px;
+}
+.ycit-block-title--sm {
+  font-size: 16px;
+}
+/* "更多" 按钮 */
+.ycit-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 13px;
+  color: var(--ycit-blue);
+  text-decoration: none;
+  border: 1px solid rgba(33,77,156,0.22);
+  border-radius: 20px;
+  padding: 4px 12px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  transition: background var(--ycit-t), color var(--ycit-t), border-color var(--ycit-t);
+}
+.ycit-more-btn svg { width: 13px; height: 13px; }
+.ycit-more-btn:hover {
+  background: var(--ycit-blue);
+  color: #fff !important;
+  border-color: var(--ycit-blue);
+  text-decoration: none;
+}
+
+
+/* ══════════════════════════════════════════════
+   7. 视频卡片
+   ══════════════════════════════════════════════ */
+.ycit-video-card {
+  background: #000;
+  border-radius: var(--ycit-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--ycit-shadow-md);
+  line-height: 0;
+  transition: box-shadow var(--ycit-t), transform var(--ycit-t);
+}
+.ycit-video-card:hover {
+  box-shadow: var(--ycit-shadow-lg);
+  transform: translateY(-3px);
+}
+/* 清除 CMS 容器的 float 干扰 */
+.ycit-redesign #main .ycit-video-card .vsb-space { float: none !important; margin: 0 !important; width: 100% !important; }
+.ycit-video-card .ed,
+.ycit-video-card .con.cl,
+.ycit-video-card .f.fl {
+  float: none !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+}
+.ycit-video-card video {
+  width: 100% !important;
+  height: auto !important;
+  display: block !important;
+}
+/* 视频说明 */
+.ycit-video-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+.ycit-badge-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ycit-blue);
+  background: rgba(33,77,156,0.07);
+  border: 1px solid rgba(33,77,156,0.18);
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.ycit-video-desc {
+  font-size: 13px;
+  color: var(--ycit-text-m);
+  line-height: 1.5;
+}
+
+
+/* ══════════════════════════════════════════════
+   8. 最新动态列表
+   CMS 渲染结构：.ycit-news-body > div.f.fr > ul.main2_list > li
+   ══════════════════════════════════════════════ */
+.ycit-news-body .f.fr { float: none !important; width: 100% !important; }
+.ycit-news-body .main2_list,
+.ycit-news-body ul {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.ycit-news-body li {
+  display: flex !important;
+  align-items: center !important;
+  height: 50px !important;
+  padding: 0 !important;
+  border-bottom: 1px solid var(--ycit-border) !important;
+  background: transparent !important;
+  text-indent: 0 !important;
+  width: auto !important;
+  position: relative !important;
+  overflow: hidden !important;
+  transition: background var(--ycit-t) !important;
+}
+.ycit-news-body li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--ycit-blue);
+  transform: scaleY(0);
+  transform-origin: center;
+  border-radius: 0 2px 2px 0;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.ycit-news-body li:hover::before { transform: scaleY(1); }
+.ycit-news-body li:hover { background: rgba(33,77,156,0.03) !important; }
+.ycit-news-body li a {
+  flex: 1 !important;
+  min-width: 0 !important;
+  display: block !important;
+  width: auto !important;
+  font-size: 14px !important;
+  color: var(--ycit-text-h) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  padding: 0 12px 0 14px !important;
+  line-height: 50px !important;
+  text-decoration: none !important;
+  transition: color var(--ycit-t) !important;
+}
+.ycit-news-body li a:hover { color: var(--ycit-blue) !important; }
+.ycit-news-body li span {
+  flex: 0 0 82px !important;
+  width: 82px !important;
+  float: none !important;
+  display: inline-block !important;
+  font-size: 12px !important;
+  color: var(--ycit-text-m) !important;
+  text-align: right !important;
+  line-height: 50px !important;
+  white-space: nowrap !important;
+  font-family: 'Consolas', 'Courier New', monospace !important;
+}
+
+
+/* ══════════════════════════════════════════════
+   9. 成果亮点卡片（填充右列空白）
+   ══════════════════════════════════════════════ */
+.ycit-achievements {
+  margin-top: 4px;
+}
+.ycit-ach-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ycit-ach-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--ycit-bg-page);
+  border-radius: var(--ycit-radius);
+  border-left: 3px solid transparent;
+  transition: border-color var(--ycit-t), background var(--ycit-t), box-shadow var(--ycit-t);
+}
+.ycit-ach-item:hover {
+  background: #fff;
+  box-shadow: var(--ycit-shadow-sm);
+}
+/* 图标容器 */
+.ycit-ach-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.ycit-ach-icon svg { width: 20px; height: 20px; }
+.ycit-ach-icon--gold  { background: rgba(232,160,32,0.12); color: var(--ycit-gold); }
+.ycit-ach-icon--blue  { background: rgba(33,77,156,0.10);  color: var(--ycit-blue); }
+.ycit-ach-icon--teal  { background: rgba(14,158,126,0.10); color: var(--ycit-teal); }
+
+.ycit-ach-item:hover.ycit-ach-item:nth-child(1) { border-left-color: var(--ycit-gold); }
+.ycit-ach-item:hover.ycit-ach-item:nth-child(2) { border-left-color: var(--ycit-blue); }
+.ycit-ach-item:hover.ycit-ach-item:nth-child(3) { border-left-color: var(--ycit-teal); }
+
+.ycit-ach-body { flex: 1; min-width: 0; }
+.ycit-ach-title {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ycit-text-h);
+  margin-bottom: 4px;
+}
+.ycit-ach-desc {
+  font-size: 12.5px;
+  color: var(--ycit-text-m);
+  line-height: 1.6;
+  margin: 0;
+}
+
+
+/* ══════════════════════════════════════════════
+   10. 数据看板 — 浅色主题（解决与 footer 撞色）
+   ══════════════════════════════════════════════ */
+.ycit-redesign .ycit-stats-section {
+  width: 100% !important;
+  display: block !important;
+  background: #eef2f9 !important;
+  border-top: 1px solid #dde5f0 !important;
+  border-bottom: 1px solid #dde5f0 !important;
+  padding: 54px 0 60px !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+.ycit-stats-inner { position: relative; z-index: 1; }
+
+/* 标题 */
+.ycit-stats-hd {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.ycit-stats-eyebrow {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--ycit-blue);
+  margin-bottom: 10px;
+}
+.ycit-stats-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ycit-text-h);
+  margin: 0 0 8px;
+  letter-spacing: 2px;
+  position: relative;
+  display: inline-block;
+}
+/* 标题下方蓝色短线 */
+.ycit-stats-title::after {
+  content: '';
+  display: block;
+  width: 44px;
+  height: 3px;
+  background: var(--ycit-blue);
+  border-radius: 2px;
+  margin: 10px auto 0;
+}
+.ycit-stats-subtitle {
+  font-size: 13px;
+  color: var(--ycit-text-m);
+  margin: 14px 0 0;
+  letter-spacing: 1px;
+}
+
+/* 4 列卡片网格 */
+.ycit-redesign .ycit-stats-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 16px !important;
+}
+
+
+/* ══════════════════════════════════════════════
+   11. 数据卡片 — 浅色主题
+   ══════════════════════════════════════════════ */
+.ycit-stat-card {
+  background: var(--ycit-surface);
+  border-radius: var(--ycit-radius-lg);
+  padding: 28px 18px 24px;
+  text-align: center;
+  border-top: 3px solid var(--ycit-blue);
+  box-shadow: var(--ycit-shadow-sm);
+  position: relative;
+  cursor: default;
+  /* 入场动效初始态 */
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity     0.5s ease,
+    transform   0.5s ease,
+    box-shadow  var(--ycit-t),
+    border-color var(--ycit-t);
+}
+.ycit-stat-card.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: calc(var(--i, 0) * 65ms);
+}
+.ycit-stat-card.is-visible:hover {
+  transform: translateY(-5px);
+  border-top-color: var(--ycit-gold);
+  box-shadow: var(--ycit-shadow-md);
+  transition-delay: 0ms;
+}
+
+/* 图标 */
+.ycit-stat-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 14px;
+  color: var(--ycit-blue);
+  opacity: 0.75;
+  transition: opacity var(--ycit-t), transform var(--ycit-t);
+}
+.ycit-stat-card:hover .ycit-stat-icon {
+  opacity: 1;
+  transform: scale(1.08) translateY(-2px);
+}
+.ycit-stat-icon svg { width: 48px; height: 48px; display: block; }
+
+/* 数字 */
+.ycit-stat-number {
+  font-size: 38px;
+  font-weight: 800;
+  color: var(--ycit-blue);
+  line-height: 1.1;
+  margin-bottom: 10px;
+  letter-spacing: -1px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-variant-numeric: tabular-nums;
+  transition: color var(--ycit-t);
+}
+.ycit-stat-card:hover .ycit-stat-number { color: var(--ycit-gold); }
+
+/* 指标名 */
+.ycit-stat-label {
+  font-size: 12px;
+  color: var(--ycit-text-m);
+  line-height: 1.5;
+  transition: color var(--ycit-t);
+}
+.ycit-stat-card:hover .ycit-stat-label { color: var(--ycit-text-b); }
+
+/* countUp 完成脉冲 */
+@keyframes ycitBluePulse {
+  0%   { text-shadow: none; }
+  40%  { text-shadow: 0 0 14px rgba(33,77,156,0.45); }
+  100% { text-shadow: none; }
+}
+.ycit-stat-number.counted { animation: ycitBluePulse 0.9s ease-out; }
+
+
+/* ══════════════════════════════════════════════
+   12. Footer 微调
+   ══════════════════════════════════════════════ */
+.ycit-redesign #footer { padding: 28px 0; }
+.ycit-redesign #footer .fl p {
+  line-height: 28px !important;
+  font-size: 14px !important;
+}
+
+
+/* ══════════════════════════════════════════════
+   13. 响应式降级
+   ══════════════════════════════════════════════ */
+@media screen and (max-width: 1340px) {
+  .ycit-redesign .ycit-hero-banner { padding: 28px 0 32px !important; }
+  .ycit-banner-inner  { flex-direction: column !important; gap: 28px !important; }
+  .ycit-banner-nums   { margin-left: 0 !important; }
+  /* float 布局响应式降级 */
+  .ycit-redesign .ycit-video-col  { float: none !important; width: 100% !important; }
+  .ycit-redesign .ycit-right-col  { margin-left: 0 !important; }
+  .ycit-stats-grid    { grid-template-columns: repeat(3, 1fr); }
+}
+@media screen and (max-width: 860px) {
+  .ycit-stats-grid    { grid-template-columns: repeat(2, 1fr); }
+}

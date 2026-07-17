@@ -1,0 +1,693 @@
+/*
+ * page.css
+ * nuxt-to-html 首页定制样式
+ * 职责：
+ *   0. Tailwind v4 oklch 颜色兼容 → 覆盖为 v3 sRGB hex
+ *   1. Inter 字体（本地 WOFF2）+ 全局字体栈
+ *   2. CMS 导航（.nav）渲染后的样式覆写
+ *   3. CMS 新闻列表样式适配（横向无限滚动）
+ *   4. 视频直接嵌入
+ *   5. 滚动入场动画
+ *   6. 其他细节
+ */
+
+
+/* ══════════════════════════════════════════════
+   0-A. 覆盖 Tailwind v4 的 oklch 颜色变量 → v3 兼容 sRGB hex
+   原因：Tailwind v4 用 oklch() 色彩空间，与 Nuxt 应用（v3 hex）存在视觉色差
+   ══════════════════════════════════════════════ */
+:root {
+  /* Red */
+  --color-red-50:   #fef2f2;
+  --color-red-100:  #fee2e2;
+  --color-red-200:  #fecaca;
+  --color-red-300:  #fca5a5;
+  --color-red-400:  #f87171;
+  --color-red-500:  #ef4444;
+  --color-red-600:  #dc2626;
+  --color-red-700:  #b91c1c;
+  --color-red-800:  #991b1b;
+  --color-red-900:  #7f1d1d;
+  /* Gray */
+  --color-gray-50:  #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  /* Yellow */
+  --color-yellow-100: #fef9c3;
+  --color-yellow-400: #facc15;
+  --color-yellow-500: #eab308;
+}
+
+
+/* ══════════════════════════════════════════════
+   0-A. Inter 字体本地加载（Latin / 数字 / 英文字母）
+   ══════════════════════════════════════════════ */
+@font-face {
+  font-family: 'Inter';
+  src: url('./fonts/Inter-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('./fonts/Inter-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('./fonts/Inter-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('./fonts/Inter-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ══════════════════════════════════════════════
+   0-B. 全局字体栈
+   英文/数字用 Inter，中文用系统最佳字体
+   ══════════════════════════════════════════════ */
+:root {
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont,
+    'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', 'WenQuanYi Micro Hei',
+    'Helvetica Neue', Arial, sans-serif;
+}
+
+html, body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 小脉冲点动画 */
+.pulse-dot {
+  animation: pulseDot 2s ease-in-out infinite;
+}
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(1.4); }
+}
+
+
+/* ══════════════════════════════════════════════
+   1. CMS 桌面导航 — 在红色 header 内 flex 排列
+   渲染结构：div.nav > ul.cl > li > a [> ul > li > a]
+   ══════════════════════════════════════════════ */
+#desktop-nav .nav,
+#desktop-nav .nav > ul.cl {
+  display: flex !important;
+  align-items: center !important;
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 60px !important;
+  float: none !important;
+  width: auto !important;
+  background: transparent !important;
+}
+
+#desktop-nav .nav > ul.cl > li {
+  position: relative !important;
+  height: 60px !important;
+  display: flex !important;
+  align-items: center !important;
+  list-style: none !important;
+  padding: 0 !important;
+  background: transparent !important;
+  float: none !important;
+  width: auto !important;
+}
+
+/* 当前页/hover 金色底线 */
+#desktop-nav .nav > ul.cl > li::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: #C9A84C;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.22s ease;
+}
+#desktop-nav .nav > ul.cl > li:hover::after,
+#desktop-nav .nav > ul.cl > li.cur::after {
+  transform: scaleX(1);
+}
+
+#desktop-nav .nav > ul.cl > li > a {
+  display: flex !important;
+  align-items: center !important;
+  height: 60px !important;
+  padding: 0 16px !important;
+  color: rgba(255,255,255,0.85) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  white-space: nowrap !important;
+  text-decoration: none !important;
+  letter-spacing: 0.5px !important;
+  transition: color 0.2s !important;
+  background: transparent !important;
+}
+#desktop-nav .nav > ul.cl > li:hover > a,
+#desktop-nav .nav > ul.cl > li.cur > a {
+  color: #fff !important;
+}
+
+/* 下拉菜单 */
+#desktop-nav .nav > ul.cl > li > ul {
+  display: none !important;
+  position: absolute !important;
+  top: 60px !important;
+  left: 0 !important;
+  min-width: 160px !important;
+  background: #fff !important;
+  border-top: 2px solid #C9A84C !important;
+  box-shadow: 0 10px 32px rgba(0,0,0,0.16) !important;
+  z-index: 100 !important;
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 4px 0 !important;
+}
+#desktop-nav .nav > ul.cl > li:hover > ul {
+  display: block !important;
+}
+#desktop-nav .nav > ul.cl > li > ul > li {
+  list-style: none !important;
+  float: none !important;
+  width: 100% !important;
+  height: auto !important;
+}
+#desktop-nav .nav > ul.cl > li > ul > li > a {
+  display: block !important;
+  padding: 10px 18px !important;
+  font-size: 13px !important;
+  color: #374151 !important;
+  white-space: nowrap !important;
+  text-decoration: none !important;
+  transition: background 0.15s, color 0.15s !important;
+  border-top: 1px solid #f3f4f6;
+}
+#desktop-nav .nav > ul.cl > li > ul > li:first-child > a { border-top: none; }
+#desktop-nav .nav > ul.cl > li > ul > li > a:hover {
+  background: #B01C1C !important;
+  color: #fff !important;
+}
+
+
+/* ══════════════════════════════════════════════
+   2. CMS 移动端导航
+   ══════════════════════════════════════════════ */
+#mobile-menu .nav,
+#mobile-menu .nav > ul.cl {
+  display: block !important;
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  float: none !important;
+  width: 100% !important;
+}
+#mobile-menu .nav > ul.cl > li {
+  display: block !important;
+  float: none !important;
+  width: 100% !important;
+  height: auto !important;
+  border-bottom: 1px solid #f3f4f6;
+}
+#mobile-menu .nav > ul.cl > li > a {
+  display: flex !important;
+  align-items: center !important;
+  padding: 14px 24px !important;
+  font-size: 14px !important;
+  color: #374151 !important;
+  text-decoration: none !important;
+  transition: color 0.15s, background 0.15s !important;
+}
+#mobile-menu .nav > ul.cl > li > a:hover {
+  color: #B01C1C !important;
+  background: #fef2f2 !important;
+}
+#mobile-menu .nav > ul.cl > li > ul {
+  display: block !important;
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #fafafa;
+}
+#mobile-menu .nav > ul.cl > li > ul > li > a {
+  display: block !important;
+  padding: 10px 40px !important;
+  font-size: 13px !important;
+  color: #6b7280 !important;
+  text-decoration: none !important;
+  border-top: 1px solid #f3f4f6;
+}
+#mobile-menu .nav > ul.cl > li > ul > li > a:hover {
+  color: #B01C1C !important;
+  background: #fef2f2 !important;
+}
+
+
+/* ══════════════════════════════════════════════
+   3. CMS 视频容器适配
+   不依赖 aspect-ratio / position:absolute，让视频自然铺满
+   ══════════════════════════════════════════════ */
+.video-cms-wrapper {
+  width: 100%;
+  background: #111;
+  border-radius: 2px;
+  overflow: hidden;
+  line-height: 0;
+}
+/* 清除 CMS 内部所有容器的 float / margin / padding */
+.video-cms-wrapper *,
+.video-cms-wrapper > div,
+.video-cms-wrapper .ed,
+.video-cms-wrapper .con,
+.video-cms-wrapper .f,
+.video-cms-wrapper .fl,
+.video-cms-wrapper .fr {
+  float: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+  line-height: 0 !important;
+  box-sizing: border-box !important;
+}
+/* 视频本体：宽度 100%，高度自适应保持原比例 */
+.video-cms-wrapper video,
+.video-cms-wrapper iframe {
+  width: 100% !important;
+  height: auto !important;
+  min-height: 180px !important;
+  display: block !important;
+  border: none !important;
+  position: static !important;
+}
+
+/* 弹窗内视频 */
+.video-modal-cms {
+  width: 100%;
+  background: #000;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.video-modal-cms *,
+.video-modal-cms > div,
+.video-modal-cms .ed,
+.video-modal-cms .con,
+.video-modal-cms .f,
+.video-modal-cms .fl,
+.video-modal-cms .fr {
+  float: none !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+  line-height: 0 !important;
+}
+.video-modal-cms video,
+.video-modal-cms iframe {
+  width: 100% !important;
+  height: auto !important;
+  max-height: 70vh !important;
+  display: block !important;
+  border: none !important;
+  position: static !important;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+}
+
+
+/* ══════════════════════════════════════════════
+   4. 新闻区 — 横向无限滚动卡片
+   CMS 渲染：div.f.fr > ul.main2_list > li > a + p.news-summary + span
+   JS 负责 clone li 实现无缝循环；CSS animation 驱动滚动
+   ══════════════════════════════════════════════ */
+
+/* 外层容器 */
+.news-scroll-outer {
+  overflow: hidden;
+  position: relative;
+}
+
+/* 清除 CMS float 容器 */
+.news-cms-wrapper { overflow: visible; }
+.news-cms-wrapper .f,
+.news-cms-wrapper .fr,
+.news-cms-wrapper .fl {
+  float: none !important;
+  width: 100% !important;
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* ul → 横向 flex，CSS animation 驱动 */
+.news-cms-wrapper ul,
+.news-cms-wrapper .main2_list {
+  display: flex !important;
+  gap: 16px !important;
+  list-style: none !important;
+  padding: 4px 0 16px !important;
+  margin: 0 !important;
+  width: max-content !important;
+  /* 拆开 shorthand：duration 不加 !important，让 JS 动态覆盖速度 */
+  animation-name: newsScrollLeft !important;
+  animation-timing-function: linear !important;
+  animation-iteration-count: infinite !important;
+  animation-duration: 30s; /* 默认 30s，JS 会按内容宽度重算 */
+  overflow: visible !important;
+}
+.news-cms-wrapper ul:hover,
+.news-cms-wrapper .main2_list:hover {
+  animation-play-state: paused !important;
+}
+
+@keyframes newsScrollLeft {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* 每张卡片 → 头条卡片样式（对标 NewsSection.vue 的 topNews 左侧卡片） */
+.news-cms-wrapper li {
+  flex: 0 0 280px !important;
+  width: 280px !important;
+  min-height: 200px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-end !important;
+  padding: 20px 18px 18px !important;
+  background: #8C1515 !important;
+  /* 与原设计一致的对角渐变叠加，增加层次感 */
+  background-image: linear-gradient(
+    145deg,
+    rgba(255,255,255,.04) 0%,
+    transparent 60%,
+    rgba(0,0,0,.18) 100%
+  ) !important;
+  border-radius: 2px !important;
+  box-shadow: 0 2px 8px rgba(140,21,21,.25) !important;
+  transition: box-shadow .2s, transform .2s !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+/* 悬浮时微微上浮 */
+.news-cms-wrapper li:hover {
+  box-shadow: 0 8px 24px rgba(140,21,21,.4) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* 标题 → 白色粗体 */
+.news-cms-wrapper li a {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+  line-height: 1.6 !important;
+  text-decoration: none !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 3 !important;
+  line-clamp: 3 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  white-space: normal !important;
+  margin-bottom: 10px !important;
+  flex-shrink: 0 !important;
+  transition: color .18s !important;
+}
+.news-cms-wrapper li a:hover { color: #C9A84C !important; }
+
+/* 摘要 → red-200 浅色文字 */
+.news-cms-wrapper li p.news-summary {
+  font-size: 12px !important;
+  color: rgba(254,202,202,.85) !important;
+  line-height: 1.65 !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  flex: 1 !important;
+  margin: 0 0 12px !important;
+  padding: 0 !important;
+  white-space: normal !important;
+}
+
+/* 日期 → red-300 浅色 */
+.news-cms-wrapper li > span,
+.news-cms-wrapper li span {
+  flex-shrink: 0 !important;
+  display: block !important;
+  font-size: 11px !important;
+  color: rgba(252,165,165,.8) !important;
+  white-space: nowrap !important;
+  float: none !important;
+  width: auto !important;
+  margin-top: auto !important;
+  font-family: 'Inter', monospace !important;
+}
+
+/* 视频直接嵌入 */
+.video-direct-wrapper {
+  width: 100%;
+  background: #000;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.video-direct-wrapper video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+}
+
+
+/* ══════════════════════════════════════════════
+   4-B. 统计数据看板自定义 Grid
+   13 个指标：手机 2 列 / 平板 4 列 / 桌面 7 列（两行）
+   ══════════════════════════════════════════════ */
+.stats-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: #e5e7eb;
+  border: 1px solid #e5e7eb;
+}
+@media (min-width: 640px) {
+  .stats-dashboard-grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (min-width: 1024px) {
+  .stats-dashboard-grid { grid-template-columns: repeat(7, 1fr); }
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 22px 12px 18px;
+  text-align: center;
+  background: #fff;
+  cursor: default;
+  transition: background 0.2s ease;
+}
+.stat-item:hover { background: #fff5f5; }
+
+.stat-icon {
+  width: 22px !important;
+  height: 22px !important;
+  color: rgba(176,28,28,0.35);
+  margin-bottom: 10px;
+  transition: color 0.2s ease;
+  display: block;
+}
+.stat-item:hover .stat-icon { color: #B01C1C; }
+
+.stat-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #B01C1C;
+  line-height: 1.1;
+  margin-bottom: 5px;
+  letter-spacing: -0.5px;
+}
+@media (min-width: 640px) {
+  .stat-value { font-size: 1.5rem; }
+}
+
+.stat-label {
+  font-size: 11px;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+
+/* ══════════════════════════════════════════════
+   5. 滚动入场动画（IntersectionObserver 驱动）
+   data-sr="up|left|right|scale|fade"
+   ══════════════════════════════════════════════ */
+[data-sr] {
+  opacity: 0;
+  transition-property: opacity, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 0.55s;
+}
+[data-sr="up"]    { transform: translateY(28px); }
+[data-sr="left"]  { transform: translateX(-28px); }
+[data-sr="right"] { transform: translateX(28px); }
+[data-sr="scale"] { transform: scale(0.92); }
+[data-sr="fade"]  { transform: none; }
+
+[data-sr].sr-visible {
+  opacity: 1;
+  transform: none;
+}
+
+
+
+/* ══════════════════════════════════════════════
+   6. 移动端菜单展开动画
+   ══════════════════════════════════════════════ */
+#mobile-menu {
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+/* ══════════════════════════════════════════════
+   7. 响应式微调
+   ══════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .news-cms-wrapper li span { display: none !important; }
+  .news-cms-wrapper li a { padding-left: 10px !important; }
+}
+
+
+/* ══════════════════════════════════════════════
+   8. 列表页 / 详情页 — 与 style.css 共存的兼容规则
+   问题：列表页需要同时加载 style.css（CMS 中间内容区依赖）
+         但 style.css 会把 body font 设为 Microsoft YaHei，
+         Tailwind preflight 的 ul reset 也会破坏 .main .List
+   ══════════════════════════════════════════════ */
+
+/* header / footer 字体隔离：不受 style.css body 字体影响 */
+#site-header,
+.ycit-footer {
+  font-family: 'Inter', 'PingFang SC', 'Noto Sans SC', 'Microsoft YaHei', sans-serif !important;
+}
+
+/* style.css 里 .wape-left 的 div 背景是蓝色 #214d9c，
+   若要换成与首页一致的深红色可取消注释：
+.main .wape-left > div {
+  background: #B01C1C !important;
+} */
+
+
+/* ══════════════════════════════════════════════
+   9. 列表/详情页布局修复类（unlayered，无层 CSS）
+   ──────────────────────────────────────────────
+   根因：style.css 的 "* { padding:0; margin:0 }" 是无层 CSS，
+         优先级高于 Tailwind v4 的 @layer utilities，
+         导致 mx-auto / px-6 / gap-* 等工具类在加载了 style.css
+         的列表页/详情页上全部失效。
+   修复：用无层 CSS 定义同等功能的语义类，在列表/详情页上替换使用。
+   ══════════════════════════════════════════════ */
+
+/* 居中约束容器（= max-w-7xl mx-auto px-6） */
+.ycit-container {
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  box-sizing: border-box;
+}
+
+/* header 内容行（= flex items-center h-[60px]） */
+.ycit-header-row {
+  display: flex;
+  align-items: center;
+  height: 60px;
+}
+
+/* 面包屑行（= py-2.5 flex items-center gap-1.5） */
+.ycit-breadcrumb-row {
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+/* footer 主内容区（= py-10） */
+.ycit-footer-body {
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+
+/* footer 二列 grid（= grid grid-cols-1 md:grid-cols-2 gap-8） */
+.ycit-footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+@media (min-width: 768px) {
+  .ycit-footer-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* footer 底栏（= py-3 flex flex-col sm:flex-row items-center justify-between gap-2） */
+.ycit-footer-bar {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+@media (min-width: 640px) {
+  .ycit-footer-bar { flex-direction: row; }
+}
+
+/* footer 内联列表重置（对抗 style.css 的 list 样式渗透） */
+.ycit-footer-list {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.375rem;
+}
+.ycit-footer-contact {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+/* mobile menu 过渡（= overflow-hidden + transition） */
+#mobile-menu {
+  overflow: hidden;
+}
+
+
