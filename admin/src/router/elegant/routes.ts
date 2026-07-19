@@ -51,6 +51,17 @@ export const generatedRoutes: GeneratedRoute[] = [
     },
     children: [
       {
+        name: 'cms_content',
+        path: '/cms/content',
+        component: 'view.cms_content',
+        meta: {
+          title: '页面内容',
+          icon: 'mdi:file-document-outline',
+          order: 2,
+          i18nKey: 'route.cms_content'
+        }
+      },
+      {
         name: 'cms_nav',
         path: '/cms/nav',
         component: 'view.cms_nav',
@@ -60,17 +71,6 @@ export const generatedRoutes: GeneratedRoute[] = [
           order: 1,
           i18nKey: 'route.cms_nav',
           roles: ['R_SUPER', 'R_ADMIN']
-        }
-      },
-      {
-        name: 'cms_content',
-        path: '/cms/content',
-        component: 'view.cms_content',
-        meta: {
-          title: '页面内容',
-          icon: 'mdi:file-document-outline',
-          order: 2,
-          i18nKey: 'route.cms_content'
         }
       },
       {
@@ -99,18 +99,6 @@ export const generatedRoutes: GeneratedRoute[] = [
     },
     children: [
       {
-        name: 'config_home',
-        path: '/config/home',
-        component: 'view.config_home',
-        meta: {
-          title: '首页配置',
-          icon: 'mdi:home-edit-outline',
-          order: 1,
-          i18nKey: 'route.config_home',
-          roles: ['R_SUPER', 'R_ADMIN']
-        }
-      },
-      {
         name: 'config_files',
         path: '/config/files',
         component: 'view.config_files',
@@ -123,14 +111,14 @@ export const generatedRoutes: GeneratedRoute[] = [
         }
       },
       {
-        name: 'manage_users',
-        path: '/manage/users',
-        component: 'view.manage_users',
+        name: 'config_home',
+        path: '/config/home',
+        component: 'view.config_home',
         meta: {
-          title: '用户管理',
-          icon: 'mdi:account-group-outline',
-          order: 3,
-          i18nKey: 'route.manage_users',
+          title: '首页配置',
+          icon: 'mdi:home-edit-outline',
+          order: 1,
+          i18nKey: 'route.config_home',
           roles: ['R_SUPER', 'R_ADMIN']
         }
       }
@@ -171,5 +159,25 @@ export const generatedRoutes: GeneratedRoute[] = [
       constant: true,
       hideInMenu: true
     }
+  },
+  {
+    name: 'manage',
+    path: '/manage',
+    component: 'layout.base',
+    meta: {
+      title: 'manage',
+      i18nKey: 'route.manage'
+    },
+    children: [
+      {
+        name: 'manage_users',
+        path: '/manage/users',
+        component: 'view.manage_users',
+        meta: {
+          title: 'manage_users',
+          i18nKey: 'route.manage_users'
+        }
+      }
+    ]
   }
 ];

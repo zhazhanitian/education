@@ -27,10 +27,11 @@ declare module "@elegant-router/types" {
     "config": "/config";
     "config_files": "/config/files";
     "config_home": "/config/home";
-    "manage_users": "/manage/users";
     "home": "/home";
     "iframe-page": "/iframe-page/:url";
     "login": "/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?";
+    "manage": "/manage";
+    "manage_users": "/manage/users";
   };
 
   /**
@@ -70,6 +71,7 @@ declare module "@elegant-router/types" {
     | "home"
     | "iframe-page"
     | "login"
+    | "manage"
   >;
 
   /**
@@ -96,8 +98,8 @@ declare module "@elegant-router/types" {
     | "cms_news"
     | "config_files"
     | "config_home"
-    | "manage_users"
     | "home"
+    | "manage_users"
   >;
 
   /**

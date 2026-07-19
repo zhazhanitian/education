@@ -1,5 +1,5 @@
 // prisma/seed.ts — 初始化数据库基础数据
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from './generated/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import bcrypt from 'bcryptjs'
 import pg from 'pg'

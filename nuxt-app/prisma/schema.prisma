@@ -1,6 +1,7 @@
 // Prisma Schema - 教学成果奖申报平台
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "./generated"
 }
 
 datasource db {
