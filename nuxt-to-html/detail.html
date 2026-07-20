@@ -32,6 +32,65 @@
     .main .kuaiXun-con p { text-indent: 2em; line-height: 1.8em; padding-bottom: 16px; }
     .main .kuaiXun-con img { max-width: 100%; height: auto; }
 
+    /* CMS 动态文章元信息栏：覆盖组件默认蓝色 */
+    .main .kuaiXun .kuaiXun-con .title > div,
+    .main .kuaiXun .kuaiXun-con h3 + span {
+      display: block !important;
+      background: #8C1515 !important;
+      color: rgba(255,255,255,.9) !important;
+      border-color: #8C1515 !important;
+    }
+    .main .kuaiXun .kuaiXun-con .title > span *,
+    .main .kuaiXun .kuaiXun-con h3 + span * {
+      color: rgba(255,255,255,.9) !important;
+    }
+
+    /* Header 关键布局内联托底，避免 CMS 缓存旧 page.css 后菜单换行 */
+    .header-school-name {
+      color: #fff !important;
+      font-size: 1.3rem !important;
+      font-weight: 600 !important;
+      line-height: 1 !important;
+      letter-spacing: .12em !important;
+      white-space: nowrap !important;
+      text-shadow: 0 2px 8px rgba(70,5,5,.25);
+    }
+    @media (min-width:1024px) {
+      #desktop-nav {
+        display: flex !important;
+        align-items: center !important;
+        flex-wrap: nowrap !important;
+        min-width: 0 !important;
+        height: 60px !important;
+      }
+      #desktop-nav > .nav {
+        flex: 0 0 auto !important;
+      }
+    }
+    @media (max-width:767px) {
+      .main .kuaiXun .kuaiXun-con .title {
+        padding-bottom: 14px !important;
+      }
+      .main .kuaiXun .kuaiXun-con .title > div,
+      .main .kuaiXun .kuaiXun-con .title > span {
+        display: flex !important;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 4px 12px;
+        text-align: center;
+      }
+      .main .kuaiXun .kuaiXun-con iframe,
+      .main .kuaiXun .kuaiXun-con embed,
+      .main .kuaiXun .kuaiXun-con object {
+        display: block;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-height: 65vh;
+        border: 0;
+      }
+    }
+
     /* ── 入场动画 ── */
     [data-sr]{opacity:0;transition:opacity .55s cubic-bezier(.4,0,.2,1),transform .55s cubic-bezier(.4,0,.2,1)}
     [data-sr="up"]{transform:translateY(20px)}
@@ -53,7 +112,7 @@
       <div class="ycit-container ycit-header-row">
 
         <!-- Logo 占位（替换为学校实际 logo 图片即可） -->
-        <a href="index.html" class="flex items-center gap-3 flex-shrink-0 mr-8 group logo-link">
+        <a href="/" class="flex items-center gap-3 flex-shrink-0 mr-8 group logo-link">
           <div class="w-9 h-9 rounded-sm bg-white/20 border border-white/30 flex items-center justify-center flex-shrink-0">
             <i data-lucide="graduation-cap" class="text-white w-5 h-5"></i>
           </div>
@@ -69,21 +128,15 @@
           <!--#begineditable "网站导航" name="网站导航" viewid="1128427" tagname="网站导航" contype="" stylesysid="" clone="0"-->elementname<!--#endeditable-->
         </nav>
 
-        <!-- 右侧信息 -->
-        <div class="hidden lg:flex items-center gap-4 ml-auto flex-shrink-0">
-          <span class="text-white/50 text-xs border-r border-white/20 pr-4">盐城工学院</span>
-          <a href="index.html" class="flex items-center gap-1.5 text-xs transition-colors"
-             style="color:rgba(255,255,255,0.55);text-decoration:none;"
-             onmouseover="this.style.color='rgba(255,255,255,0.9)'"
-             onmouseout="this.style.color='rgba(255,255,255,0.55)'">
-            <i data-lucide="house" style="width:12px;height:12px;flex-shrink:0;"></i>
-            首页
-          </a>
+        <!-- 右侧学校名称 -->
+        <div class="header-school-name hidden lg:block ml-auto flex-shrink-0">
+          盐城工学院
         </div>
 
         <!-- 移动端汉堡按钮 -->
-        <button class="lg:hidden ml-auto text-white/85 hover:text-white p-1 transition-colors" id="mobile-menu-btn" aria-label="打开菜单">
-          <i data-lucide="menu" class="w-6 h-6" id="menu-icon"></i>
+        <button class="lg:hidden ml-auto text-white/85 hover:text-white p-1 transition-colors" id="mobile-menu-btn" aria-label="打开菜单" aria-expanded="false" aria-controls="mobile-menu">
+          <i data-lucide="menu" class="menu-open-icon w-6 h-6"></i>
+          <i data-lucide="x" class="menu-close-icon w-6 h-6"></i>
         </button>
       </div>
     </div>

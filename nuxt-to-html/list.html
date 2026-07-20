@@ -57,6 +57,64 @@
     }
     .main img { display: inline !important; max-width: 100%; height: auto; }
 
+    /* Header 关键布局内联托底，避免 CMS 缓存旧 page.css 后菜单换行 */
+    .header-school-name {
+      color: #fff !important;
+      font-size: 1.3rem !important;
+      font-weight: 600 !important;
+      line-height: 1 !important;
+      letter-spacing: .12em !important;
+      white-space: nowrap !important;
+      text-shadow: 0 2px 8px rgba(70,5,5,.25);
+    }
+    @media (min-width:1024px) {
+      #desktop-nav {
+        display: flex !important;
+        align-items: center !important;
+        flex-wrap: nowrap !important;
+        min-width: 0 !important;
+        height: 60px !important;
+      }
+      #desktop-nav > .nav {
+        flex: 0 0 auto !important;
+      }
+    }
+    @media (max-width:767px) {
+      .main .List {
+        margin-left: 14px !important;
+        padding: 10px 0 !important;
+      }
+      .main .List li,
+      .main1 .List li {
+        display: flex !important;
+        align-items: center !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 44px;
+        line-height: normal !important;
+      }
+      .main .List li a,
+      .main1 .List li a {
+        flex: 1 1 auto;
+        width: auto !important;
+        min-width: 0;
+        height: auto !important;
+        padding: 10px 8px 10px 0;
+        line-height: 1.6 !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        box-sizing: border-box;
+      }
+      .main .List li span,
+      .main1 .List li span {
+        flex: 0 0 78px;
+        width: 78px !important;
+        line-height: 1.6 !important;
+        white-space: nowrap;
+      }
+    }
+
     /* ── 入场动画 ── */
     [data-sr]{opacity:0;transition:opacity .55s cubic-bezier(.4,0,.2,1),transform .55s cubic-bezier(.4,0,.2,1)}
     [data-sr="up"]{transform:translateY(20px)}
@@ -80,7 +138,7 @@
       <div class="ycit-container ycit-header-row">
 
         <!-- Logo 占位（替换为学校实际 logo 图片即可） -->
-        <a href="index.html" class="flex items-center gap-3 flex-shrink-0 mr-8 group logo-link">
+        <a href="/" class="flex items-center gap-3 flex-shrink-0 mr-8 group logo-link">
           <div class="w-9 h-9 rounded-sm bg-white/20 border border-white/30 flex items-center justify-center flex-shrink-0">
             <i data-lucide="graduation-cap" class="text-white w-5 h-5"></i>
           </div>
@@ -96,21 +154,15 @@
           <!--#begineditable "网站导航" name="网站导航" viewid="1128427" tagname="网站导航" contype="" stylesysid="" clone="0"-->elementname<!--#endeditable-->
         </nav>
 
-        <!-- 右侧信息 -->
-        <div class="hidden lg:flex items-center gap-4 ml-auto flex-shrink-0">
-          <span class="text-white/50 text-xs border-r border-white/20 pr-4">盐城工学院</span>
-          <a href="index.html" class="flex items-center gap-1.5 text-xs transition-colors"
-             style="color:rgba(255,255,255,0.55);text-decoration:none;"
-             onmouseover="this.style.color='rgba(255,255,255,0.9)'"
-             onmouseout="this.style.color='rgba(255,255,255,0.55)'">
-            <i data-lucide="house" style="width:12px;height:12px;flex-shrink:0;"></i>
-            首页
-          </a>
+        <!-- 右侧学校名称 -->
+        <div class="header-school-name hidden lg:block ml-auto flex-shrink-0">
+          盐城工学院
         </div>
 
         <!-- 移动端汉堡按钮 -->
-        <button class="lg:hidden ml-auto text-white/85 hover:text-white p-1 transition-colors" id="mobile-menu-btn" aria-label="打开菜单">
-          <i data-lucide="menu" class="w-6 h-6" id="menu-icon"></i>
+        <button class="lg:hidden ml-auto text-white/85 hover:text-white p-1 transition-colors" id="mobile-menu-btn" aria-label="打开菜单" aria-expanded="false" aria-controls="mobile-menu">
+          <i data-lucide="menu" class="menu-open-icon w-6 h-6"></i>
+          <i data-lucide="x" class="menu-close-icon w-6 h-6"></i>
         </button>
       </div>
     </div>

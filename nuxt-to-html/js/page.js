@@ -19,35 +19,49 @@
      ══════════════════════════════════════════════ */
   var menuBtn    = document.getElementById('mobile-menu-btn');
   var mobileMenu = document.getElementById('mobile-menu');
-  var menuIcon   = document.getElementById('menu-icon');
   var isOpen     = false;
 
+  function getMenuMaxHeight() {
+    var header = document.getElementById('site-header');
+    var topBar = header && header.firstElementChild
+      ? header.firstElementChild.offsetHeight
+      : 60;
+    return Math.max(160, window.innerHeight - topBar);
+  }
+
   function openMenu() {
+    if (!menuBtn || !mobileMenu) return;
     isOpen = true;
-    mobileMenu.style.maxHeight = mobileMenu.scrollHeight + 'px';
-    if (menuIcon && window.lucide) {
-      menuIcon.setAttribute('data-lucide', 'x');
-      window.lucide.createIcons({ nodes: [menuIcon] });
-    }
+    menuBtn.setAttribute('aria-expanded', 'true');
+    menuBtn.setAttribute('aria-label', '关闭菜单');
+    document.documentElement.classList.add('mobile-menu-open');
+    document.body.classList.add('mobile-menu-open');
+    mobileMenu.style.maxHeight = Math.min(
+      mobileMenu.scrollHeight,
+      getMenuMaxHeight()
+    ) + 'px';
   }
 
   function closeMenu() {
+    if (!menuBtn || !mobileMenu) return;
     isOpen = false;
+    menuBtn.setAttribute('aria-expanded', 'false');
+    menuBtn.setAttribute('aria-label', '打开菜单');
     mobileMenu.style.maxHeight = '0';
-    if (menuIcon && window.lucide) {
-      menuIcon.setAttribute('data-lucide', 'menu');
-      window.lucide.createIcons({ nodes: [menuIcon] });
-    }
+    document.documentElement.classList.remove('mobile-menu-open');
+    document.body.classList.remove('mobile-menu-open');
   }
 
   if (menuBtn && mobileMenu) {
-    menuBtn.addEventListener('click', function () {
+    menuBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
       if (isOpen) { closeMenu(); } else { openMenu(); }
     });
 
     /* 点击菜单内链接后自动关闭 */
     mobileMenu.addEventListener('click', function (e) {
-      if (e.target.tagName === 'A') {
+      if (e.target.closest && e.target.closest('a')) {
         setTimeout(closeMenu, 120);
       }
     });
@@ -56,6 +70,17 @@
     document.addEventListener('click', function (e) {
       if (isOpen && !document.getElementById('site-header').contains(e.target)) {
         closeMenu();
+      }
+    });
+
+    window.addEventListener('resize', function () {
+      if (window.innerWidth >= 1024 && isOpen) {
+        closeMenu();
+      } else if (isOpen) {
+        mobileMenu.style.maxHeight = Math.min(
+          mobileMenu.scrollHeight,
+          getMenuMaxHeight()
+        ) + 'px';
       }
     });
   }
