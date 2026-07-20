@@ -348,11 +348,26 @@ html, body {
   -webkit-overflow-scrolling: touch;
 }
 
+#site-header {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 2147483000 !important;
+  isolation: isolate;
+}
+
 html.mobile-menu-open,
 body.mobile-menu-open {
   height: 100%;
   overflow: hidden !important;
   overscroll-behavior: none;
+}
+
+/* 部分移动浏览器的原生视频层不遵循 z-index，菜单打开时强制隐藏 */
+body.mobile-menu-open video,
+body.mobile-menu-open iframe,
+body.mobile-menu-open embed,
+body.mobile-menu-open object {
+  visibility: hidden !important;
 }
 
 @media (max-width: 1023px) {
@@ -361,7 +376,7 @@ body.mobile-menu-open {
     top: calc(var(--mobile-header-height, 60px) + 8px) !important;
     right: 12px !important;
     left: 12px !important;
-    z-index: 1000 !important;
+    z-index: 2147483640 !important;
     width: auto !important;
     max-height: 0 !important;
     overflow-x: hidden !important;
