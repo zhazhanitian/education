@@ -198,10 +198,11 @@
     }
     .innovation-card{
       min-height:136px;
-      cursor:pointer;
+      cursor:default;
       color:inherit;
       text-decoration:none;
     }
+    .innovation-card[href]{cursor:pointer;}
 
     /* 首页 Footer 响应式布局 */
     .home-footer-grid{
@@ -359,7 +360,7 @@
 
         <!-- 右：三大创新点摘要；后续可将每个 article 改为带 href 的 a 标签 -->
         <div class="space-y-3">
-          <a href="/system/go.jsp?treeid=1679&amp;apptype=content&amp;urltype=news.NewsContentUrl&amp;param=wbnewsid%3D1991" class="innovation-card flex gap-3 p-4 border border-gray-100 hover:border-[#B01C1C]/30 hover:bg-red-50/30 transition-all rounded-sm" data-sr="up" data-delay="200" aria-label="查看创新点一详情">
+          <div data-href="/system/go.jsp?treeid=1679&amp;apptype=content&amp;urltype=news.NewsContentUrl&amp;param=wbnewsid%3D1991" class="innovation-card flex gap-3 p-4 border border-gray-100 hover:border-[#B01C1C]/30 hover:bg-red-50/30 transition-all rounded-sm" data-sr="up" data-delay="200">
             <div class="w-8 h-8 rounded-sm bg-red-50 flex items-center justify-center flex-shrink-0 mt-0.5">
               <i data-lucide="lightbulb" class="text-[#B01C1C] w-4 h-4"></i>
             </div>
@@ -367,9 +368,9 @@
               <h4 class="font-semibold text-gray-800 text-sm mb-1.5 leading-relaxed">创新点一：提出“以行动生成素养”的工程教育新理念</h4>
               <p class="innovation-summary text-xs text-gray-500 leading-relaxed">突破“传授式”素养观，将工程素养界定为面向复杂工程系统的综合行动能力，并确立“工程行动”作为素养生成的核心载体，通过“做中学、事上练、实践中悟”实现素养的内生性生长。</p>
             </div>
-          </a>
+          </div>
 
-          <a href="/system/go.jsp?treeid=1679&amp;apptype=content&amp;urltype=news.NewsContentUrl&amp;param=wbnewsid%3D2001" class="innovation-card flex gap-3 p-4 border border-gray-100 hover:border-[#B01C1C]/30 hover:bg-red-50/30 transition-all rounded-sm" data-sr="up" data-delay="300" aria-label="查看创新点二详情">
+          <div data-href="/system/go.jsp?treeid=1679&amp;apptype=content&amp;urltype=news.NewsContentUrl&amp;param=wbnewsid%3D2001" class="innovation-card flex gap-3 p-4 border border-gray-100 hover:border-[#B01C1C]/30 hover:bg-red-50/30 transition-all rounded-sm" data-sr="up" data-delay="300">
             <div class="w-8 h-8 rounded-sm bg-red-50 flex items-center justify-center flex-shrink-0 mt-0.5">
               <i data-lucide="handshake" class="text-[#B01C1C] w-4 h-4"></i>
             </div>
@@ -377,9 +378,9 @@
               <h4 class="font-semibold text-gray-800 text-sm mb-1.5 leading-relaxed">创新点二：构建“认知—演练—体悟”三阶递进的素养培育新模式</h4>
               <p class="innovation-summary text-xs text-gray-500 leading-relaxed">突破传统线性分段逻辑，创建“低年级认知奠基、中年级演练强能、高年级体悟内化”的螺旋上升培养链，推动学生工程能力从单点技能向系统集成能力跃升。</p>
             </div>
-          </a>
+          </div>
 
-          <a href="/system/go.jsp?treeid=1679&amp;apptype=content&amp;urltype=news.NewsContentUrl&amp;param=wbnewsid%3D2011" class="innovation-card flex gap-3 p-4 border border-gray-100 hover:border-[#B01C1C]/30 hover:bg-red-50/30 transition-all rounded-sm" data-sr="up" data-delay="400" aria-label="查看创新点三详情">
+          <div data-href="/system/go.jsp?treeid=1679&amp;apptype=content&amp;urltype=news.NewsContentUrl&amp;param=wbnewsid%3D2011" class="innovation-card flex gap-3 p-4 border border-gray-100 hover:border-[#B01C1C]/30 hover:bg-red-50/30 transition-all rounded-sm" data-sr="up" data-delay="400">
             <div class="w-8 h-8 rounded-sm bg-red-50 flex items-center justify-center flex-shrink-0 mt-0.5">
               <i data-lucide="monitor-dot" class="text-[#B01C1C] w-4 h-4"></i>
             </div>
@@ -387,7 +388,7 @@
               <h4 class="font-semibold text-gray-800 text-sm mb-1.5 leading-relaxed">创新点三：创立“全周期浸润—动态评价闭环”的持续改进新机制</h4>
               <p class="innovation-summary text-xs text-gray-500 leading-relaxed">将评价嵌入工程行动全流程，以校企联合过程性评价贯穿真实工程项目全生命周期，评价结果即时反馈，反向驱动课程体系、实训项目与工程场景持续迭代。</p>
             </div>
-          </a>
+          </div>
         </div>
 
       </div>
