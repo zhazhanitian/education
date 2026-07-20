@@ -73,12 +73,28 @@
       }
       .main .kuaiXun .kuaiXun-con .title > div,
       .main .kuaiXun .kuaiXun-con .title > span {
-        display: flex !important;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: center;
-        gap: 4px 12px;
-        text-align: center;
+        display: block !important;
+        height: auto !important;
+        padding: 8px 10px !important;
+        text-align: center !important;
+        font-size: 13px !important;
+        line-height: 1.8 !important;
+        white-space: normal !important;
+        word-break: keep-all !important;
+        overflow-wrap: normal !important;
+      }
+      .main .kuaiXun .kuaiXun-con .title > div > span,
+      .main .kuaiXun .kuaiXun-con .title > div > em,
+      .main .kuaiXun .kuaiXun-con .title > span > span,
+      .main .kuaiXun .kuaiXun-con .title > span > em {
+        display: inline-block !important;
+        margin: 0 5px;
+        font-size: 13px !important;
+        white-space: nowrap !important;
+        word-break: keep-all !important;
+      }
+      .main .kuaiXun .kuaiXun-con .title script {
+        display: none !important;
       }
       .main .kuaiXun .kuaiXun-con iframe,
       .main .kuaiXun .kuaiXun-con embed,
@@ -128,11 +144,6 @@
           <!--#begineditable "网站导航" name="网站导航" viewid="1128427" tagname="网站导航" contype="" stylesysid="" clone="0"-->elementname<!--#endeditable-->
         </nav>
 
-        <!-- 右侧学校名称 -->
-        <div class="header-school-name hidden lg:block ml-auto flex-shrink-0">
-          盐城工学院
-        </div>
-
         <!-- 移动端汉堡按钮 -->
         <button class="lg:hidden ml-auto text-white/85 hover:text-white p-1 transition-colors" id="mobile-menu-btn" aria-label="打开菜单" aria-expanded="false" aria-controls="mobile-menu">
           <i data-lucide="menu" class="menu-open-icon w-6 h-6"></i>
@@ -144,10 +155,6 @@
     <!-- 移动端下拉菜单 -->
     <div class="lg:hidden bg-white border-t-2 border-[#C9A84C] shadow-xl" id="mobile-menu" style="max-height:0;overflow:hidden;transition:max-height 0.28s ease;">
       <div class="mobile-nav-content" style="padding-top:0.5rem;padding-bottom:0.5rem;">
-        <a href="index.html" class="flex items-center gap-2 text-sm font-medium text-[#B01C1C] border-b border-gray-100"
-           style="padding:0.875rem 1.5rem;">
-          <span class="w-1 h-1 rounded-full bg-[#C9A84C]"></span> 首页
-        </a>
         <!--#begineditable "网站导航" name="网站导航" viewid="1128427" tagname="网站导航" contype="" stylesysid="" clone="0"-->elementname<!--#endeditable-->
       </div>
     </div>
@@ -191,23 +198,10 @@
   <footer class="ycit-footer" style="background:#8C1515;color:rgba(254,202,202,1);">
 
     <div class="ycit-container ycit-footer-body">
-      <div class="ycit-footer-grid">
-
-        <!-- 品牌 -->
-        <div>
-          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem;">
-            <div class="w-7 h-7 rounded-sm bg-[#C9A84C] flex items-center justify-center flex-shrink-0">
-              <i data-lucide="graduation-cap" class="text-white w-4 h-4"></i>
-            </div>
-            <span style="color:#fff;font-weight:700;font-size:14px;">教学成果奖申报平台</span>
-          </div>
-          <p style="font-size:12px;line-height:1.6;color:rgba(252,165,165,0.9);">
-            盐城工学院 · 2026年国家教学成果奖申报展示平台，聚焦高职教育教学改革创新，促进区域职业教育高质量发展。
-          </p>
-        </div>
+      <div class="ycit-footer-grid footer-contact-layout">
 
         <!-- 联系方式 -->
-        <div>
+        <div class="footer-contact-only">
           <h4 style="color:#fff;font-size:14px;font-weight:600;margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(255,255,255,0.2);">联系我们</h4>
           <ul class="ycit-footer-contact">
             <li style="display:flex;align-items:flex-start;gap:0.5rem;color:rgba(254,202,202,1);">
@@ -217,6 +211,10 @@
             <li style="display:flex;align-items:center;gap:0.5rem;color:rgba(254,202,202,1);">
               <i data-lucide="mail-open" style="color:#C9A84C;flex-shrink:0;width:16px;height:16px;"></i>
               <span style="font-size:12px;">邮编：224051</span>
+            </li>
+            <li style="display:flex;align-items:center;gap:0.5rem;color:rgba(254,202,202,1);">
+              <i data-lucide="phone" style="color:#C9A84C;flex-shrink:0;width:16px;height:16px;"></i>
+              <span style="font-size:12px;">联系电话：0515-88298122</span>
             </li>
           </ul>
         </div>

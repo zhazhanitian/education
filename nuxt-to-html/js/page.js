@@ -21,12 +21,14 @@
   var mobileMenu = document.getElementById('mobile-menu');
   var isOpen     = false;
 
-  function getMenuMaxHeight() {
+  function updateMenuPosition() {
     var header = document.getElementById('site-header');
     var topBar = header && header.firstElementChild
       ? header.firstElementChild.offsetHeight
       : 60;
-    return Math.max(160, window.innerHeight - topBar);
+    if (mobileMenu) {
+      mobileMenu.style.setProperty('--mobile-header-height', topBar + 'px');
+    }
   }
 
   function openMenu() {
@@ -36,10 +38,8 @@
     menuBtn.setAttribute('aria-label', '关闭菜单');
     document.documentElement.classList.add('mobile-menu-open');
     document.body.classList.add('mobile-menu-open');
-    mobileMenu.style.maxHeight = Math.min(
-      mobileMenu.scrollHeight,
-      getMenuMaxHeight()
-    ) + 'px';
+    updateMenuPosition();
+    mobileMenu.classList.add('is-open');
   }
 
   function closeMenu() {
@@ -47,6 +47,7 @@
     isOpen = false;
     menuBtn.setAttribute('aria-expanded', 'false');
     menuBtn.setAttribute('aria-label', '打开菜单');
+    mobileMenu.classList.remove('is-open');
     mobileMenu.style.maxHeight = '0';
     document.documentElement.classList.remove('mobile-menu-open');
     document.body.classList.remove('mobile-menu-open');
@@ -77,10 +78,7 @@
       if (window.innerWidth >= 1024 && isOpen) {
         closeMenu();
       } else if (isOpen) {
-        mobileMenu.style.maxHeight = Math.min(
-          mobileMenu.scrollHeight,
-          getMenuMaxHeight()
-        ) + 'px';
+        updateMenuPosition();
       }
     });
   }
