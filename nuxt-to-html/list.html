@@ -3,272 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>列表页 - 盐城工学院 · 2026年国家教学成果申报</title>
-
-  <!-- 1. Tailwind CSS（本地构建版，提供 header/footer 颜色/字重等工具类） -->
-  <link rel="stylesheet" href="style/tailwind.css">
-  <!-- 2. CMS 原始样式（.main / .wape-left / .wape-right / .List 等中间内容区依赖此文件） -->
-  <link rel="stylesheet" href="style/style.css" type="text/css" media="all">
-  <!-- 3. 自定义样式（导航 / footer / ycit-* 无层布局类 / 动画等） -->
-  <link rel="stylesheet" href="style/page.css">
-  <!-- Lucide Icons（本地） -->
-  <script src="js/lucide.min.js"></script>
-
-  <!--
-    列表/详情页兼容补丁（内联 <style> 优先级最高）：
-    ① style.css "* { margin:0; padding:0 }" 是无层 CSS，优先级高于 Tailwind @layer utilities，
-       导致 mx-auto / px-6 等失效 → 已在 page.css 中定义 ycit-* 无层布局类替代
-    ② style.css 把 body 字体设为 Microsoft YaHei → #site-header / .ycit-footer 已隔离
-    ③ Tailwind preflight "ul { list-style:none }" 破坏 .main .List → 此处恢复
-  -->
-  <style>
-    /* ── 恢复 .main 内 CMS 列表原始样式 ── */
-    .main, .main1 {
-      font-family: "Microsoft YaHei", arial, verdana, sans-serif;
-      font-size: 14px;
-      color: #666;
-    }
-    .main .List, .main1 .List {
-      list-style-type: square !important;
-      margin-left: 20px !important;
-      padding: 20px 0 !important;
-    }
-    .main .List li, .main1 .List li {
-      list-style: square !important;
-      width: 100% !important;
-      height: 38px !important;
-      line-height: 38px !important;
-      border-bottom: 1px dashed #e5e5e5 !important;
-    }
-    .main .List li a {
-      width: 80% !important;
-      height: 38px !important;
-      line-height: 38px !important;
-      display: inline-block !important;
-      font-size: 14px !important;
-      color: #666 !important;
-    }
-    .main .List li span {
-      display: inline-block !important;
-      width: 20% !important;
-      text-align: right !important;
-      font-size: 14px !important;
-      color: #999 !important;
-    }
-    .main img { display: inline !important; max-width: 100%; height: auto; }
-
-    /* Header 关键布局内联托底，避免 CMS 缓存旧 page.css 后菜单换行 */
-    .header-school-name {
-      color: #fff !important;
-      font-size: 1.3rem !important;
-      font-weight: 600 !important;
-      line-height: 1 !important;
-      letter-spacing: .12em !important;
-      white-space: nowrap !important;
-      text-shadow: 0 2px 8px rgba(70,5,5,.25);
-    }
-    @media (min-width:1024px) {
-      #desktop-nav {
-        display: flex !important;
-        align-items: center !important;
-        flex-wrap: nowrap !important;
-        min-width: 0 !important;
-        height: 60px !important;
-      }
-      #desktop-nav > .nav {
-        flex: 0 0 auto !important;
-      }
-    }
-    @media (max-width:767px) {
-      .main .List,
-      .main .ss {
-        margin-left: 14px !important;
-        padding: 10px 0 !important;
-      }
-      .main .List li,
-      .main1 .List li,
-      .main .ss li {
-        display: block !important;
-        width: 100% !important;
-        height: auto !important;
-        min-height: 58px;
-        padding: 10px 0 !important;
-        line-height: normal !important;
-        box-sizing: border-box;
-      }
-      .main .List li a,
-      .main1 .List li a,
-      .main .ss li a {
-        display: block !important;
-        width: 100% !important;
-        height: auto !important;
-        padding: 0 4px 0 0;
-        line-height: 1.6 !important;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        box-sizing: border-box;
-        float: none !important;
-      }
-      .main .List li span,
-      .main1 .List li span,
-      .main .ss li span {
-        display: block !important;
-        width: 100% !important;
-        margin-top: 5px;
-        text-align: left !important;
-        line-height: 1.4 !important;
-        font-size: 12px !important;
-        white-space: nowrap !important;
-        word-break: keep-all !important;
-        overflow-wrap: normal !important;
-        float: none !important;
-        box-sizing: border-box;
-      }
-      .main .List li span br,
-      .main1 .List li span br,
-      .main .ss li span br {
-        display: none !important;
-      }
-    }
-
-    /* ── 入场动画 ── */
-    [data-sr]{opacity:0;transition:opacity .55s cubic-bezier(.4,0,.2,1),transform .55s cubic-bezier(.4,0,.2,1)}
-    [data-sr="up"]{transform:translateY(20px)}
-    [data-sr="left"]{transform:translateX(-20px)}
-    [data-sr].sr-visible{opacity:1;transform:none}
-  </style>
+  <title>列表页｜盐城工学院2026年国家教学成果申报</title>
+  <!-- CMS 内容组件基础样式 -->
+  <link rel="stylesheet" href="style/style.css">
+  <!-- 与首页一致的公共 Layout -->
+  <link rel="stylesheet" href="style/home.css">
+  <!-- 列表页与详情页专用样式 -->
+  <link rel="stylesheet" href="style/inner.css">
 </head>
+<body class="inner-page">
+  <div class="top-accent"></div>
 
-<!--
-  body 用 style="" 内联而非 Tailwind 类，避免 flex/min-height 被层叠干扰
--->
-<body style="min-height:100vh;display:flex;flex-direction:column;background:#fff;">
-
-  <!-- ════════════════════════════════════════════
-       Header — 与首页完全一致
-       注意：内层 div 改用 ycit-container + ycit-header-row
-            （= max-w-7xl mx-auto px-6 flex items-center h-[60px]）
-       ════════════════════════════════════════════ -->
-  <header id="site-header" class="sticky top-0 z-50 shadow-md">
-    <div class="bg-[#B01C1C]">
-      <div class="ycit-container ycit-header-row">
-
-        <!-- Logo 占位（替换为学校实际 logo 图片即可） -->
-        <a href="/" class="flex items-center gap-3 flex-shrink-0 mr-8 group logo-link">
-          <div class="w-9 h-9 rounded-sm bg-white/20 border border-white/30 flex items-center justify-center flex-shrink-0">
-            <i data-lucide="graduation-cap" class="text-white w-5 h-5"></i>
-          </div>
-          <!-- ↑ 替换为：<img src="logo.png" alt="盐城工学院" class="h-9 w-auto"> -->
-          <div class="leading-tight hidden sm:block">
-            <div class="text-white/60 text-[10px] tracking-widest uppercase">Yancheng Institute of Technology</div>
-            <div class="text-white font-bold text-sm tracking-wide leading-none">2026年国家教学成果申报</div>
-          </div>
+  <header class="site-head">
+    <div class="brand-row w">
+      <div class="brand-identity">
+        <a href="index.html" aria-label="返回网站首页">
+          <img class="brand-logo" src="/images/logo.png" alt="盐城工学院">
         </a>
-
-        <!-- 桌面导航（CMS 渲染 .nav > ul > li 结构） -->
-        <nav class="hidden lg:block flex-1" id="desktop-nav">
-          <!--#begineditable "网站导航" name="网站导航" viewid="1128427" tagname="网站导航" contype="" stylesysid="" clone="0"-->elementname<!--#endeditable-->
-        </nav>
-
-        <!-- 移动端汉堡按钮 -->
-        <button class="lg:hidden ml-auto text-white/85 hover:text-white p-1 transition-colors" id="mobile-menu-btn" aria-label="打开菜单" aria-expanded="false" aria-controls="mobile-menu">
-          <i data-lucide="menu" class="menu-open-icon w-6 h-6"></i>
-          <i data-lucide="x" class="menu-close-icon w-6 h-6"></i>
-        </button>
+        <div class="header-partners">
+          <span>合作单位</span>
+          <p>西门子工业软件（上海）有限公司　金风科技股份有限公司</p>
+        </div>
       </div>
+      <span class="brand-divider" aria-hidden="true"></span>
+      <div class="brand-copy">
+        <h1 class="brand-title">从专业教育到工程行动：<br>地方高校工科人才工程素养培育模式的创新与实践</h1>
+      </div>
+      <button class="mobile-nav-btn" id="mobile-nav-btn" type="button" aria-label="打开导航" aria-expanded="false" aria-controls="nav-shell">
+        <span></span>
+      </button>
     </div>
 
-    <!-- 移动端下拉菜单 -->
-    <div class="lg:hidden bg-white border-t-2 border-[#C9A84C] shadow-xl" id="mobile-menu" style="max-height:0;overflow:hidden;transition:max-height 0.28s ease;">
-      <div class="mobile-nav-content" style="padding-top:0.5rem;padding-bottom:0.5rem;">
+    <div class="nav-shell" id="nav-shell">
+      <div class="nav-component w">
         <!--#begineditable "网站导航" name="网站导航" viewid="1128427" tagname="网站导航" contype="" stylesysid="" clone="0"-->elementname<!--#endeditable-->
       </div>
     </div>
   </header>
 
-
-  <!-- ════════════════════════════════════════════
-       面包屑导航条
-       ════════════════════════════════════════════ -->
-  <div style="border-bottom:1px solid #f3f4f6;background:#fff;">
-    <div class="ycit-container ycit-breadcrumb-row" style="color:#9ca3af;font-size:12px;">
+  <div class="inner-breadcrumb">
+    <div class="w">
       <!--#begineditable name="当前位置" viewid="1128417" tagname="当前位置" action="" layout="" contype="" stylesysid="" template="" tplstyle="" clone="" istemp="true"-->elementname<!--#endeditable-->
     </div>
   </div>
 
-
-  <!-- ════════════════════════════════════════════
-       CMS 中间内容区（原样保留，由 style.css 负责样式）
-       flex:1 确保 footer 始终在页面底部
-       ════════════════════════════════════════════ -->
-  <div style="flex:1;">
+  <main class="inner-content">
     <div class="main cl">
-      <div class="wape-left">
+      <aside class="wape-left">
         <div><!--#begineditable name="栏目名称" action="webber.wbst.com.nav.MenuAction" layout="/system/_component/sitenav/tplshowcolumnname.jsp" tpltype="1" contype="" clone="" viewid="1128464" contentviewid="" tagname="栏目名称"-->elementname<!--#endeditable--></div>
         <!--#begineditable name="网站二级导航" viewid="1128416" tagname="网站二级导航" action="" layout="" contype="" stylesysid="" template="" tplstyle="" clone="" istemp=""-->elementname<!--#endeditable-->
-      </div><!--wape-left-->
-      <div class="wape-right">
+      </aside>
+      <section class="wape-right">
         <!--#begineditable name="静态翻页列表" viewid="1128420" tagname="静态翻页列表" action="" layout="" contype="" stylesysid="" template="" tplstyle="" clone="" istemp="true"-->elementname<!--#endeditable-->
-      </div><!--wape-right-->
+      </section>
     </div>
-  </div>
+  </main>
 
-
-  <!-- ════════════════════════════════════════════
-       Footer — 与首页完全一致
-       结构层改用 ycit-* 无层布局类，避免 style.css * reset 干扰
-       ════════════════════════════════════════════ -->
-  <footer class="ycit-footer" style="background:#8C1515;color:rgba(254,202,202,1);">
-
-    <div class="ycit-container ycit-footer-body">
-      <div class="ycit-footer-grid footer-contact-layout">
-
-        <!-- 联系方式 -->
-        <div class="footer-contact-only">
-          <h4 style="color:#fff;font-size:14px;font-weight:600;margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(255,255,255,0.2);">联系我们</h4>
-          <ul class="ycit-footer-contact">
-            <li style="display:flex;align-items:flex-start;gap:0.5rem;color:rgba(254,202,202,1);">
-              <i data-lucide="map-pin" style="color:#C9A84C;flex-shrink:0;width:16px;height:16px;margin-top:2px;"></i>
-              <span style="font-size:12px;">（希望大道校区）江苏省盐城市希望大道中路1号</span>
-            </li>
-            <li style="display:flex;align-items:center;gap:0.5rem;color:rgba(254,202,202,1);">
-              <i data-lucide="mail-open" style="color:#C9A84C;flex-shrink:0;width:16px;height:16px;"></i>
-              <span style="font-size:12px;">邮编：224051</span>
-            </li>
-            <li style="display:flex;align-items:center;gap:0.5rem;color:rgba(254,202,202,1);">
-              <i data-lucide="phone" style="color:#C9A84C;flex-shrink:0;width:16px;height:16px;"></i>
-              <span style="font-size:12px;">联系电话：0515-88298122</span>
-            </li>
-          </ul>
-        </div>
-
+  <footer class="site-footer">
+    <div class="footer-main w">
+      <div>
+        <strong>盐城工学院 · 2026年国家教学成果申报平台</strong>
+        <p>地址：江苏省盐城市亭湖区希望大道中路1号　邮编：224051</p>
+        <p>联系电话：0515-88298122　邮箱：jwc@ycit.edu.cn</p>
       </div>
+      <div class="footer-mark">YCIT</div>
     </div>
-
-    <div style="border-top:1px solid rgba(255,255,255,0.2);">
-      <div class="ycit-container ycit-footer-bar" style="font-size:12px;color:rgba(254,202,202,1);">
-        <span>盐城工学院版权所有 &nbsp;苏ICP备11037185号-1</span>
-        <span>技术支持：教务处信息化建设团队</span>
-      </div>
-    </div>
-
+    <div class="footer-bottom">盐城工学院版权所有　苏ICP备11037185号-1</div>
   </footer>
 
-
-  <!-- ════════════════════════════════════════════
-       脚本
-       ════════════════════════════════════════════ -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      if (window.lucide) lucide.createIcons();
-    });
-  </script>
-  <script src="js/page.js"></script>
-
-  <!-- CMS 原始 jQuery 插件（若 CMS 内容区需要可取消注释） -->
-  <!-- <script src="js/jquery.min.js"></script> -->
-  <!-- <script src="js/jquery.SuperSlide.js"></script> -->
-
+  <script src="js/home.js"></script>
 </body>
 </html>
