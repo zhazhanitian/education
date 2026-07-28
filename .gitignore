@@ -35,3 +35,5 @@ pnpm-debug.log*
 .cache/
 tmp/
 temp/
+
+video/
