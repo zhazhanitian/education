@@ -3,586 +3,202 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>盐城工学院 · 2026年国家教学成果申报</title>
-  <!-- Tailwind CSS（本地构建版，无需联网） -->
-  <link rel="stylesheet" href="style/tailwind.css">
-  <!-- Lucide Icons（本地，无需联网） -->
-  <script src="js/lucide.min.js"></script>
-  <!-- 自定义样式（含本地字体、CMS适配、动画） -->
-  <link rel="stylesheet" href="style/page.css">
-  <!-- 关键布局托底：即使 page.css 未加载也能正确渲染 -->
-  <style>
-    /* 数据看板 Grid */
-    .stats-dashboard-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:#e5e7eb;border:1px solid #e5e7eb}
-    @media(min-width:640px){.stats-dashboard-grid{grid-template-columns:repeat(4,1fr)}}
-    @media(min-width:1024px){.stats-dashboard-grid{grid-template-columns:repeat(7,1fr)}}
-    .stat-item{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px 12px 18px;text-align:center;background:#fff;color:inherit;text-decoration:none;cursor:pointer;transition:background .2s}
-    .stat-item:hover{background:#fff5f5}
-    .stat-icon{width:22px!important;height:22px!important;color:rgba(176,28,28,.35);margin-bottom:10px;display:block;transition:color .2s}
-    .stat-item:hover .stat-icon{color:#B01C1C}
-    .stat-value{font-size:1.25rem;font-weight:700;color:#B01C1C;line-height:1.1;margin-bottom:5px}
-    .stat-label{font-size:11px;color:#6b7280;line-height:1.4}
-
-    /* 视频直接嵌入 */
-    .video-direct-wrapper{width:100%;background:#000;border-radius:2px;overflow:hidden}
-    .video-direct-wrapper video{display:block;width:100%;height:auto;aspect-ratio:16/9}
-
-    /* 新闻无限横向滚动 */
-    .news-scroll-outer{overflow:hidden;position:relative}
-    .news-cms-wrapper{overflow:visible}
-    .news-cms-wrapper .f,.news-cms-wrapper .fr,.news-cms-wrapper .fl{float:none!important;width:100%!important;display:block!important;margin:0!important;padding:0!important}
-    .news-cms-wrapper ul,.news-cms-wrapper .main2_list{display:flex!important;gap:16px!important;list-style:none!important;padding:4px 0 16px!important;margin:0!important;width:max-content!important;animation-name:newsScrollLeft!important;animation-timing-function:linear!important;animation-iteration-count:infinite!important;animation-duration:30s;overflow:visible!important}
-    .news-cms-wrapper ul:hover,.news-cms-wrapper .main2_list:hover{animation-play-state:paused!important}
-    @keyframes newsScrollLeft{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-    .news-cms-wrapper li{flex:0 0 280px!important;width:280px!important;min-height:200px!important;display:flex!important;flex-direction:column!important;justify-content:flex-end!important;padding:20px 18px 18px!important;background:#8C1515!important;background-image:linear-gradient(145deg,rgba(255,255,255,.04) 0%,transparent 60%,rgba(0,0,0,.18) 100%)!important;border-radius:2px!important;box-shadow:0 2px 8px rgba(140,21,21,.25)!important;transition:box-shadow .2s,transform .2s!important;cursor:pointer!important;box-sizing:border-box!important;overflow:hidden!important;position:relative!important}
-    .news-cms-wrapper li:hover{box-shadow:0 8px 24px rgba(140,21,21,.4)!important;transform:translateY(-2px)!important}
-    .news-cms-wrapper li a{font-size:14px!important;font-weight:700!important;color:#fff!important;line-height:1.6!important;text-decoration:none!important;display:-webkit-box!important;-webkit-line-clamp:3!important;line-clamp:3!important;-webkit-box-orient:vertical!important;overflow:hidden!important;white-space:normal!important;margin-bottom:10px!important;flex-shrink:0!important;transition:color .18s!important}
-    .news-cms-wrapper li a:hover{color:#C9A84C!important}
-    .news-cms-wrapper li p.news-summary{font-size:12px!important;color:rgba(254,202,202,.85)!important;line-height:1.65!important;display:-webkit-box!important;-webkit-line-clamp:2!important;line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important;flex:1!important;margin:0 0 12px!important;padding:0!important;white-space:normal!important}
-    .news-cms-wrapper li>span,.news-cms-wrapper li span{flex-shrink:0!important;display:block!important;font-size:11px!important;color:rgba(252,165,165,.8)!important;white-space:nowrap!important;float:none!important;width:auto!important;margin-top:auto!important}
-
-    /* 入场动画 */
-    [data-sr]{opacity:0;transition:opacity .55s cubic-bezier(.4,0,.2,1),transform .55s cubic-bezier(.4,0,.2,1)}
-    [data-sr="up"]{transform:translateY(28px)}
-    [data-sr="left"]{transform:translateX(-28px)}
-    [data-sr="right"]{transform:translateX(28px)}
-    [data-sr].sr-visible{opacity:1;transform:none}
-
-    /* CMS 导航下拉：乳灰色底（折中：比纯白暗，比米黄素净） */
-    #site-header .nav ul li ul,
-    #desktop-nav .nav ul li ul,
-    #desktop-nav .nav > ul > li > ul,
-    .nav ul li ul{
-      background:#EEEBE8!important;
-      /* margin-top 2px 让下拉顶边和一级导航金色下划线之间产生间隙，消除重叠感 */
-      margin-top:2px!important;
-      border-top:none!important;
-      box-shadow:0 8px 24px rgba(80,10,10,.18)!important;
-      padding:6px 0!important;
-    }
-    #site-header .nav ul li ul li,
-    #desktop-nav .nav ul li ul li,
-    .nav ul li ul li{background:transparent!important;}
-    #site-header .nav ul li ul li a,
-    #desktop-nav .nav ul li ul li a,
-    .nav ul li ul li a,
-    .nav ul li:hover li a{
-      color:#6B3A3A!important;
-      background:transparent!important;
-      border-top:1px solid rgba(176,28,28,.08)!important;
-      font-size:13px!important;
-    }
-    #site-header .nav ul li ul li:first-child a,
-    #desktop-nav .nav ul li ul li:first-child a,
-    .nav ul li ul li:first-child a{border-top:none!important;}
-    #site-header .nav ul li ul li a:hover,
-    #desktop-nav .nav ul li ul li a:hover,
-    .nav ul li ul li:hover a,
-    .nav li ul li:hover a{
-      background:#B01C1C!important;
-      color:#fff!important;
-    }
-
-    /* Hero：导航 + 标题 + 视频约一屏 */
-    .hero-core{
-      min-height:calc(100vh - 60px);
-      display:flex;
-      align-items:center;
-      box-sizing:border-box;
-      padding:36px 0 44px;
-    }
-    @media(max-width:1023px){
-      .hero-core{min-height:auto;padding:32px 0 36px;}
-    }
-    /* Hero 左侧：以金色竖线建立视觉骨架，与右侧视频边框呼应 */
-    .hero-copy-panel{
-      position:relative;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      height:100%;
-      padding:22px 8px;
-    }
-    .hero-copy-content{
-      padding-left:25px;
-      border-left:3px solid rgba(216,184,87,.72);
-    }
-    .hero-layout{align-items:stretch;}
-    .hero-half{min-width:0;}
-    @media(min-width:1024px){
-      .hero-video-column{grid-column:span 7 / span 7;}
-      .hero-text-column{grid-column:span 5 / span 5;}
-    }
-    .header-school-name{
-      color:#fff;
-      /* font-family:'STKaiti','KaiTi','华文楷体','楷体','FangSong',serif; */
-      font-size:1.3rem;
-      font-weight:600;
-      line-height:1;
-      letter-spacing:.12em;
-      white-space:nowrap;
-      text-shadow:0 2px 8px rgba(70,5,5,.25);
-    }
-    html{scroll-behavior:smooth;}
-    #news-section{scroll-margin-top:60px;}
-    @media(min-width:1024px){
-      #desktop-nav{
-        display:flex!important;
-        align-items:center;
-        height:60px;
-      }
-    }
-    .hero-title{
-      font-size:1.75rem;
-      line-height:1.35;
-      letter-spacing:0.02em;
-      color:#FFFDFC;
-    }
-    @media(min-width:768px){
-      .hero-title{font-size:2.125rem;line-height:1.32;}
-    }
-    @media(min-width:1024px){
-      .hero-title{font-size:2.125rem;line-height:1.32;}
-      .hero-title-line{white-space:nowrap;}
-    }
-    .hero-title-line{
-      display:block;
-    }
-    .hero-title-line + .hero-title-line{
-      margin-top:.28em;
-    }
-    @media(min-width:1280px){
-      .hero-title{font-size:2.35rem;line-height:1.3;}
-    }
-    .hero-kicker{
-      color:#E2C675;
-      font-size:1.125rem;
-      line-height:1.5;
-      letter-spacing:.08em;
-      margin-bottom:14px;
-    }
-    .hero-copy{
-      color:rgba(255,247,242,.82);
-      font-size:14px;
-      line-height:1.9;
-      margin-top:32px;
-      padding-top:30px;
-      border-top:1px solid rgba(255,255,255,.16);
-    }
-    @media(min-width:1280px){
-      .hero-kicker{font-size:1.25rem;}
-      .hero-copy{font-size:14px;line-height:2;}
-    }
-    @media(max-width:1023px){
-      .hero-copy-panel{
-        height:auto;
-        padding:10px 0;
-      }
-      .hero-copy-content{
-        padding-left:20px;
-      }
-    }
-    .hero-video-wrap{
-      width:100%;
-      border:1px solid rgba(216,184,87,.45);
-      box-shadow:0 16px 38px rgba(65,5,5,.28);
-    }
-
-    /* 创新点摘要：保留原卡片结构，多行内容自动省略 */
-    .innovation-summary{
-      display:-webkit-box;
-      overflow:hidden;
-      -webkit-box-orient:vertical;
-      -webkit-line-clamp:3;
-      line-clamp:3;
-    }
-    .innovation-card{
-      min-height:136px;
-      cursor:default;
-      color:inherit;
-      text-decoration:none;
-    }
-    .innovation-card[href]{cursor:pointer;}
-
-    /* 首页 Footer 响应式布局 */
-    .home-footer-grid{
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:2rem;
-    }
-    .home-footer-bar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:.5rem;
-    }
-    @media(max-width:639px){
-      .home-footer-grid{
-        grid-template-columns:1fr;
-      }
-      .home-footer-bar{
-        flex-direction:column;
-        justify-content:center;
-        text-align:center;
-      }
-    }
-  </style>
+  <meta name="description" content="盐城工学院2026年国家教学成果申报平台">
+  <title>盐城工学院｜2026年国家教学成果申报</title>
+  <link rel="stylesheet" href="style/home.css">
 </head>
+<body>
+  <div class="top-accent"></div>
 
-<body class="min-h-screen flex flex-col bg-white">
-
-  <!-- ════════════════════════════════════════════
-       头部导航
-       ════════════════════════════════════════════ -->
-  <header id="site-header" class="sticky top-0 z-50 shadow-md">
-    <div class="bg-[#B01C1C]">
-      <div class="max-w-7xl mx-auto px-6 flex items-center h-[60px]">
-
-        <!-- Logo 占位（替换为学校实际 logo 图片即可） -->
-        <a href="/" class="flex items-center gap-3 flex-shrink-0 mr-8 group logo-link">
-          <div class="w-9 h-9 rounded-sm bg-white/20 border border-white/30 flex items-center justify-center flex-shrink-0">
-            <i data-lucide="graduation-cap" class="text-white w-5 h-5"></i>
-          </div>
-          <!-- ↑ 替换为：<img src="logo.png" alt="盐城工学院" class="h-9 w-auto"> -->
-          <div class="leading-tight hidden sm:block">
-            <div class="text-white/60 text-[10px] tracking-widest uppercase">Yancheng Institute of Technology</div>
-            <div class="text-white font-bold text-sm tracking-wide leading-none mt-0.5">2026年国家教学成果申报</div>
-          </div>
+  <header class="site-head">
+    <div class="brand-row w">
+      <div class="brand-identity">
+        <a href="index.html" aria-label="返回网站首页">
+          <!-- 临时 Logo；校方替换图片时可移除 home.css 中 .brand-logo 的 filter -->
+          <img class="brand-logo" src="/images/logo.png" alt="盐城工学院">
         </a>
-
-        <!-- 桌面导航（CMS 渲染 .nav > ul > li 结构，page.css 负责样式） -->
-        <nav class="hidden lg:block flex-1" id="desktop-nav">
-          <!--#begineditable "网站导航" name="网站导航" viewid="1128427" tagname="网站导航" contype="" stylesysid="" clone="0"-->elementname<!--#endeditable-->
-          <!-- 静态一级菜单：结构与 CMS 输出保持一致，复用同一套样式 -->
-          <div class="nav static-nav">
-            <ul class="cl">
-              <li><a href="#news-section">媒体报道</a></li>
-            </ul>
-          </div>
-        </nav>
-
-        <!-- 移动端汉堡按钮 -->
-        <button class="lg:hidden ml-auto text-white/85 hover:text-white p-1 transition-colors" id="mobile-menu-btn" aria-label="打开菜单" aria-expanded="false" aria-controls="mobile-menu">
-          <i data-lucide="menu" class="menu-open-icon w-6 h-6"></i>
-          <i data-lucide="x" class="menu-close-icon w-6 h-6"></i>
-        </button>
+        <div class="header-partners">
+          <span>合作单位</span>
+          <p>西门子工业软件（上海）有限公司　金风科技股份有限公司</p>
+        </div>
       </div>
+      <span class="brand-divider" aria-hidden="true"></span>
+      <div class="brand-copy">
+        <h1 class="brand-title">从专业教育到工程行动：<br>地方高校工科人才工程素养培育模式的创新与实践</h1>
+      </div>
+      <button class="mobile-nav-btn" id="mobile-nav-btn" type="button" aria-label="打开导航" aria-expanded="false" aria-controls="nav-shell">
+        <span></span>
+      </button>
     </div>
 
-    <!-- 移动端下拉菜单 -->
-    <div class="lg:hidden bg-white border-t-2 border-[#C9A84C] shadow-xl overflow-hidden" id="mobile-menu" style="max-height:0;transition:max-height 0.28s ease;">
-      <div class="mobile-nav-content py-2">
-        <!-- CMS 导航在移动端同样输出 -->
+    <div class="nav-shell" id="nav-shell">
+      <div class="nav-component w">
         <!--#begineditable "网站导航" name="网站导航" viewid="1128427" tagname="网站导航" contype="" stylesysid="" clone="0"-->elementname<!--#endeditable-->
-        <a href="#news-section" class="flex items-center gap-2 px-6 py-3.5 text-sm font-medium text-gray-700 border-b border-gray-100">
-          <span class="w-1 h-1 rounded-full bg-[#C9A84C]"></span> 媒体报道
-        </a>
       </div>
     </div>
   </header>
 
-
-  <!-- ════════════════════════════════════════════
-       Hero Section — 深红背景，核心成果展示
-       ════════════════════════════════════════════ -->
-  <section class="relative overflow-hidden bg-[#9B1515]">
-    <!-- 右侧光晕 -->
-    <div class="absolute -top-16 -right-16 w-80 h-80 rounded-full bg-white/5 blur-3xl pointer-events-none"></div>
-
-    <!-- 底部波浪过渡 -->
-    <div class="absolute bottom-0 left-0 right-0 z-10 pointer-events-none" style="height:36px;">
-      <svg viewBox="0 0 1440 50" preserveAspectRatio="none" class="w-full block" style="height:36px;" fill="white">
-        <path d="M0,50 L0,25 Q360,0 720,20 Q1080,40 1440,8 L1440,50 Z" />
-      </svg>
-    </div>
-
-    <div class="relative z-10 max-w-7xl mx-auto px-6 hero-core">
-      <div class="hero-layout w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-
-        <!-- 左侧：宣传视频（核心展示） -->
-        <div class="hero-half hero-video-column" id="hero-video" data-sr="left" data-delay="100">
-          <!-- 原始路径：cgjsp.mp4，请按实际部署路径修改 src -->
-          <div class="hero-video-wrap video-direct-wrapper">
-            <video width="100%" controls360="no" x5-video-player-type="h5-page" controls autoplay muted playsinline preload="auto" id="main-video">
-              <source src="cgjsp.mp4" type="video/mp4">
-              <p class="text-sm text-gray-400 p-4">您的浏览器不支持 HTML5 视频，请升级浏览器。</p>
-            </video>
+  <main>
+    <section class="film-section" id="achievement-video-section">
+      <div class="film-container w" data-reveal>
+        <header class="film-heading showcase-heading">
+          <div class="showcase-heading-main">
+            <h2>成果视频</h2>
           </div>
+          <i class="showcase-line" aria-hidden="true"></i>
+        </header>
+
+        <div class="film-player">
+          <video id="achievement-video" controls360="no" x5-video-player-type="h5-page" controls preload="metadata" playsinline poster="cgjsp-cover.jpg">
+            <source src="cgjsp.mp4" type="video/mp4">
+            您的浏览器不支持 HTML5 视频。
+          </video>
         </div>
 
-        <!-- 右侧标题 -->
-        <div class="hero-half hero-text-column hero-copy-panel" data-sr="right" data-delay="200">
-          <div class="hero-copy-content">
-            <h1 class="text-white font-bold">
-              <span class="hero-kicker block font-normal">
-                从专业教育到工程行动：
-              </span>
-              <span class="hero-title block">
-                <span class="hero-title-line">地方高校工科人才工程素养</span>
-                <span class="hero-title-line">培育模式的创新与实践</span>
-              </span>
-            </h1>
+        <nav class="film-chapters" id="video-chapters" aria-label="成果视频章节">
+          <ol>
+            <li><button class="is-active" type="button" data-video-time="0"><time>00:00 - 01:05</time><span><b>序言</b>时代之问</span></button></li>
+            <li><button type="button" data-video-time="65"><time>01:05 - 03:05</time><span><b>第一篇章</b>三化引领，构筑育人新体系</span></button></li>
+            <li><button type="button" data-video-time="185"><time>03:05 - 04:50</time><span><b>第二篇章</b>数智基座，开辟培养新路径</span></button></li>
+            <li><button type="button" data-video-time="290"><time>04:50 - 06:35</time><span><b>第三篇章</b>闭环机制，重塑评价新方法</span></button></li>
+            <li><button type="button" data-video-time="395"><time>06:35 - 09:26</time><span><b>第四篇章</b>硕果累累，辐射全球</span></button></li>
+            <li><button type="button" data-video-time="566"><time>09:26 - 09:56</time><span><b>总结</b>未来展望</span></button></li>
+          </ol>
+        </nav>
+      </div>
+    </section>
 
-            <p class="hero-copy">
-              盐城工学院自2011年起，依托11项省部级重点教改课题，历经“卓越计划”试点、国家“十三五”产教融合发展工程、教育部首批“新工科”研究与实践，建成教育部首批现代产业学院，系统构建了以“工程行动”为核心的工程素养培育新体系。
-            </p>
+    <section class="section section-soft" id="resources">
+      <div class="w">
+        <div class="section-heading showcase-heading" data-reveal>
+          <div class="showcase-heading-main">
+            <h2>教学资源</h2>
           </div>
+          <i class="showcase-line" aria-hidden="true"></i>
         </div>
 
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ════════════════════════════════════════════
-       Achievement Section — 成果详介 + 创新点
-       ════════════════════════════════════════════ -->
-  <section class="py-14 bg-white">
-    <div class="max-w-7xl mx-auto px-6">
-      <div class="flex items-center gap-3 mb-10" data-sr="left">
-        <div class="w-1 h-8 bg-[#B01C1C] rounded-sm"></div>
-        <h2 class="text-xl md:text-2xl font-bold text-gray-800">成果介绍</h2>
-        <span class="text-xs text-gray-400 ml-1 hidden md:block">Achievement Introduction</span>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
-
-        <!-- 左：成果简介，两段内容完整展示 -->
-        <div data-sr="up" data-delay="100">
-          <h3 class="text-base font-bold text-[#B01C1C] mb-4 leading-relaxed">
-            从专业教育到工程行动：地方高校工科人才工程素养培育模式的创新与实践
-          </h3>
-          <div class="space-y-3.5 text-gray-600 text-sm leading-[1.9]">
-            <p>区域产业迭代升级，亟需具备工程师核心素养、能够直面复杂工程系统的新型工程人才。盐城作为全国绿色低碳标杆和新能源产业集聚高地，对“工程素养系统化”人才需求尤为迫切。然而，传统专业教育长期以学科知识传授为主，学生面向真实工程系统的综合行动能力明显不足。盐城工学院自2011年起，依托11项省部级重点教改课题，历经“卓越计划”试点、国家“十三五”产教融合发展工程、教育部首批“新工科”研究与实践，建成教育部首批现代产业学院，系统构建了以“工程行动”为核心的工程素养培育新体系（图1）。成果获2026年国家教学成果奖江苏重大储备项目（参照省教学成果奖特等奖标准立项）。</p>
-            <p>成果将“工程素养”重新定义为：贯通工程知识、实践能力、系统思维与职业素养，应对复杂工程系统的综合行动能力。依循“工程认知—工程演练—工程体悟”三层递进行动逻辑，通过重构知识体系、创设工程场景、实施工程浸润，将基于学科逻辑的传统专业教育升级为契合产业逻辑的工程行动，实现了模式创新。</p>
-          </div>
-        </div>
-
-        <!-- 右：三大创新点摘要；后续可将每个 article 改为带 href 的 a 标签 -->
-        <div class="space-y-3">
-          <div data-href="/system/go.jsp?treeid=1679&amp;apptype=content&amp;urltype=news.NewsContentUrl&amp;param=wbnewsid%3D1991" class="innovation-card flex gap-3 p-4 border border-gray-100 hover:border-[#B01C1C]/30 hover:bg-red-50/30 transition-all rounded-sm" data-sr="up" data-delay="200">
-            <div class="w-8 h-8 rounded-sm bg-red-50 flex items-center justify-center flex-shrink-0 mt-0.5">
-              <i data-lucide="lightbulb" class="text-[#B01C1C] w-4 h-4"></i>
-            </div>
-            <div>
-              <h4 class="font-semibold text-gray-800 text-sm mb-1.5 leading-relaxed">创新点一：提出“以行动生成素养”的工程教育新理念</h4>
-              <p class="innovation-summary text-xs text-gray-500 leading-relaxed">突破“传授式”素养观，将工程素养界定为面向复杂工程系统的综合行动能力，并确立“工程行动”作为素养生成的核心载体，通过“做中学、事上练、实践中悟”实现素养的内生性生长。</p>
-            </div>
-          </div>
-
-          <div data-href="/system/go.jsp?treeid=1679&amp;apptype=content&amp;urltype=news.NewsContentUrl&amp;param=wbnewsid%3D2001" class="innovation-card flex gap-3 p-4 border border-gray-100 hover:border-[#B01C1C]/30 hover:bg-red-50/30 transition-all rounded-sm" data-sr="up" data-delay="300">
-            <div class="w-8 h-8 rounded-sm bg-red-50 flex items-center justify-center flex-shrink-0 mt-0.5">
-              <i data-lucide="handshake" class="text-[#B01C1C] w-4 h-4"></i>
-            </div>
-            <div>
-              <h4 class="font-semibold text-gray-800 text-sm mb-1.5 leading-relaxed">创新点二：构建“认知—演练—体悟”三阶递进的素养培育新模式</h4>
-              <p class="innovation-summary text-xs text-gray-500 leading-relaxed">突破传统线性分段逻辑，创建“低年级认知奠基、中年级演练强能、高年级体悟内化”的螺旋上升培养链，推动学生工程能力从单点技能向系统集成能力跃升。</p>
-            </div>
-          </div>
-
-          <div data-href="/system/go.jsp?treeid=1679&amp;apptype=content&amp;urltype=news.NewsContentUrl&amp;param=wbnewsid%3D2011" class="innovation-card flex gap-3 p-4 border border-gray-100 hover:border-[#B01C1C]/30 hover:bg-red-50/30 transition-all rounded-sm" data-sr="up" data-delay="400">
-            <div class="w-8 h-8 rounded-sm bg-red-50 flex items-center justify-center flex-shrink-0 mt-0.5">
-              <i data-lucide="monitor-dot" class="text-[#B01C1C] w-4 h-4"></i>
-            </div>
-            <div>
-              <h4 class="font-semibold text-gray-800 text-sm mb-1.5 leading-relaxed">创新点三：创立“全周期浸润—动态评价闭环”的持续改进新机制</h4>
-              <p class="innovation-summary text-xs text-gray-500 leading-relaxed">将评价嵌入工程行动全流程，以校企联合过程性评价贯穿真实工程项目全生命周期，评价结果即时反馈，反向驱动课程体系、实训项目与工程场景持续迭代。</p>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ════════════════════════════════════════════
-       Stats Section — 核心数据看板
-       ════════════════════════════════════════════ -->
-  <section class="bg-gray-50 border-t border-gray-200 py-12">
-    <div class="max-w-7xl mx-auto px-6">
-      <div class="flex items-center gap-3 mb-8" data-sr="left">
-        <div class="w-1 h-8 bg-[#B01C1C] rounded-sm"></div>
-        <h2 class="text-xl md:text-2xl font-bold text-gray-800">核心数据看板</h2>
-        <span class="text-xs text-gray-400 ml-1 hidden md:block">Core Data</span>
-      </div>
-
-      <div class="stats-dashboard-grid">
-
-        <a href="/system/go.jsp?treeid=1689&amp;apptype=content&amp;urltype=news.NewsContentUrl&amp;param=wbnewsid%3D2021" class="stat-item group" data-sr="up" data-delay="0" aria-label="查看培养应用型人才详情">
-          <i data-lucide="users" class="stat-icon"></i>
-          <div class="stat-value">15,000+</div>
-          <div class="stat-label">培养应用型人才</div>
-        </a>
-
-        <a href="/system/go.jsp?treeid=1689&amp;apptype=content&amp;urltype=news.NewsContentUrl&amp;param=wbnewsid%3D2031" class="stat-item group" data-sr="up" data-delay="50" aria-label="查看产业学院详情">
-          <i data-lucide="building-2" class="stat-icon"></i>
-          <div class="stat-value">8个</div>
-          <div class="stat-label">产业学院</div>
-        </a>
-
-        <a href="/system/go.jsp?treeid=1689&amp;apptype=content&amp;urltype=news.NewsContentUrl&amp;param=wbnewsid%3D2041" class="stat-item group" data-sr="up" data-delay="100" aria-label="查看微专业详情">
-          <i data-lucide="book-open" class="stat-icon"></i>
-          <div class="stat-value">12门</div>
-          <div class="stat-label">微专业</div>
-        </a>
-
-        <a href="/system/go.jsp?treeid=1689&amp;apptype=content&amp;urltype=news.NewsContentUrl&amp;param=wbnewsid%3D2051" class="stat-item group" data-sr="up" data-delay="150" aria-label="查看特色工坊详情">
-          <i data-lucide="wrench" class="stat-icon"></i>
-          <div class="stat-value">6个</div>
-          <div class="stat-label">特色工坊</div>
-        </a>
-
-        <a href="/system/go.jsp?treeid=1689&amp;apptype=content&amp;urltype=news.NewsContentUrl&amp;param=wbnewsid%3D2061" class="stat-item group" data-sr="up" data-delay="200" aria-label="查看工程案例详情">
-          <i data-lucide="folder-open" class="stat-icon"></i>
-          <div class="stat-value">200+</div>
-          <div class="stat-label">工程案例</div>
-        </a>
-
-        <a href="/system/go.jsp?treeid=1689&amp;apptype=content&amp;urltype=news.NewsContentUrl&amp;param=wbnewsid%3D2071" class="stat-item group" data-sr="up" data-delay="250" aria-label="查看专任师资详情">
-          <i data-lucide="graduation-cap" class="stat-icon"></i>
-          <div class="stat-value">300+</div>
-          <div class="stat-label">专任师资</div>
-        </a>
-
-        <a href="/system/go.jsp?treeid=1689&amp;apptype=content&amp;urltype=news.NewsContentUrl&amp;param=wbnewsid%3D2081" class="stat-item group" data-sr="up" data-delay="300" aria-label="查看学生获奖详情">
-          <i data-lucide="trophy" class="stat-icon"></i>
-          <div class="stat-value">500+</div>
-          <div class="stat-label">学生获奖</div>
-        </a>
-
-        <a href="/system/go.jsp?treeid=1689&amp;apptype=content&amp;urltype=news.NewsContentUrl&amp;param=wbnewsid%3D2091" class="stat-item group" data-sr="up" data-delay="350" aria-label="查看教研教改课题详情">
-          <i data-lucide="flask-conical" class="stat-icon"></i>
-          <div class="stat-value">80+</div>
-          <div class="stat-label">教研教改课题</div>
-        </a>
-
-        <a href="/system/go.jsp?treeid=1689&amp;apptype=content&amp;urltype=news.NewsContentUrl&amp;param=wbnewsid%3D2101" class="stat-item group" data-sr="up" data-delay="400" aria-label="查看教材专著详情">
-          <i data-lucide="book" class="stat-icon"></i>
-          <div class="stat-value">45本</div>
-          <div class="stat-label">教材专著</div>
-        </a>
-
-        <a href="/system/go.jsp?treeid=1689&amp;apptype=content&amp;urltype=news.NewsContentUrl&amp;param=wbnewsid%3D2111" class="stat-item group" data-sr="up" data-delay="450" aria-label="查看专业设置调整详情">
-          <i data-lucide="settings-2" class="stat-icon"></i>
-          <div class="stat-value">18个</div>
-          <div class="stat-label">专业设置调整</div>
-        </a>
-
-        <a href="/system/go.jsp?treeid=1689&amp;apptype=content&amp;urltype=news.NewsContentUrl&amp;param=wbnewsid%3D2121" class="stat-item group" data-sr="up" data-delay="500" aria-label="查看专业群和课程群详情">
-          <i data-lucide="layers" class="stat-icon"></i>
-          <div class="stat-value">6+</div>
-          <div class="stat-label">专业群 / 课程群</div>
-        </a>
-
-        <a href="/system/go.jsp?treeid=1689&amp;apptype=content&amp;urltype=news.NewsContentUrl&amp;param=wbnewsid%3D2131" class="stat-item group" data-sr="up" data-delay="550" aria-label="查看课程改革详情">
-          <i data-lucide="refresh-cw" class="stat-icon"></i>
-          <div class="stat-value">120门</div>
-          <div class="stat-label">课程改革</div>
-        </a>
-
-        <a href="/system/go.jsp?treeid=1689&amp;apptype=content&amp;urltype=news.NewsContentUrl&amp;param=wbnewsid%3D2141" class="stat-item group" data-sr="up" data-delay="600" aria-label="查看各类获奖详情">
-          <i data-lucide="award" class="stat-icon"></i>
-          <div class="stat-value">50+</div>
-          <div class="stat-label">各类获奖</div>
-        </a>
-
-        <a href="/system/go.jsp?treeid=1689&amp;apptype=content&amp;urltype=news.NewsContentUrl&amp;param=wbnewsid%3D2151" class="stat-item group" data-sr="up" data-delay="650" aria-label="查看工程教育探索详情">
-          <i data-lucide="history" class="stat-icon"></i>
-          <div class="stat-value">15年</div>
-          <div class="stat-label">工程教育探索</div>
-        </a>
-
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ════════════════════════════════════════════
-       News Section — 媒体报道（CMS 列表）
-       ════════════════════════════════════════════ -->
-  <section id="news-section" class="py-14 bg-gray-50 border-t border-gray-200">
-    <div class="max-w-7xl mx-auto px-6">
-
-      <div class="flex items-center gap-3 mb-8" data-sr="left">
-        <div class="w-1 h-8 bg-[#B01C1C] rounded-sm"></div>
-        <h2 class="text-xl md:text-2xl font-bold text-gray-800">媒体报道</h2>
-        <span class="text-xs text-gray-400 ml-1 hidden md:block">News &amp; Updates</span>
-      </div>
-
-      <!-- 无限横向滚动：JS 在 CMS 渲染后 clone li，CSS animation 驱动 -->
-      <!-- CMS 子组件模板（粘贴回 CMS）：
-           <div class="f fr" style="width:100%;">
-             <ul class="main2_list">
-               <#list list_news as news>
-                 <li>
-                   <a href="${news.url}" target="_blank">${news.showTitle}</a>
-                   <p class="news-summary">${news.tipsTitle}</p>
-                   <span>${news.showDate}</span>
-                 </li>
-               </#list>
-             </ul>
-           </div>
-      -->
-      <div class="news-scroll-outer pt-2" data-sr="up" data-delay="80">
-        <div class="news-cms-wrapper" id="news-scroll-wrapper">
-          <!--#begineditable "标题列表" name="学院新闻列表" viewid="1128474" tagname="学院新闻列表" contype="" stylesysid="" clone=""-->elementname<!--#endeditable-->
+        <div class="resource-grid">
+          <article class="resource-card" data-reveal>
+            <video class="resource-video" controls preload="metadata" playsinline><source src="resource-01.mp4" type="video/mp4"></video>
+            <div class="resource-info"><h3>同济大学智慧校园辅助决策驾驶舱</h3></div>
+          </article>
+          <article class="resource-card" data-reveal>
+            <video class="resource-video" controls preload="metadata" playsinline><source src="resource-02.mp4" type="video/mp4"></video>
+            <div class="resource-info"><h3>同济大学教师人工智能素养标准</h3></div>
+          </article>
+          <article class="resource-card" data-reveal>
+            <video class="resource-video" controls preload="metadata" playsinline><source src="resource-03.mp4" type="video/mp4"></video>
+            <div class="resource-info"><h3>“教师人工智能素养与能力提升”培训</h3></div>
+          </article>
+          <article class="resource-card" data-reveal>
+            <video class="resource-video" controls preload="metadata" playsinline><source src="resource-04.mp4" type="video/mp4"></video>
+            <div class="resource-info"><h3>CivilGPT：专业教育智能助手</h3></div>
+          </article>
+          <article class="resource-card" data-reveal>
+            <video class="resource-video" controls preload="metadata" playsinline><source src="resource-05.mp4" type="video/mp4"></video>
+            <div class="resource-info"><h3>MedGO：医学课程智能教学实践</h3></div>
+          </article>
+          <article class="resource-card" data-reveal>
+            <video class="resource-video" controls preload="metadata" playsinline><source src="resource-06.mp4" type="video/mp4"></video>
+            <div class="resource-info"><h3>行之大模型：教学全流程智能赋能</h3></div>
+          </article>
+          <article class="resource-card" data-reveal>
+            <video class="resource-video" controls preload="metadata" playsinline><source src="resource-07.mp4" type="video/mp4"></video>
+            <div class="resource-info"><h3>设计大模型与专业课程融合实践</h3></div>
+          </article>
+          <article class="resource-card" data-reveal>
+            <video class="resource-video" controls preload="metadata" playsinline><source src="resource-08.mp4" type="video/mp4"></video>
+            <div class="resource-info"><h3>“一网通学”教学资源平台</h3></div>
+          </article>
+          <article class="resource-card" data-reveal>
+            <video class="resource-video" controls preload="metadata" playsinline><source src="resource-09.mp4" type="video/mp4"></video>
+            <div class="resource-info"><h3>打造“AI+”课程与实验项目矩阵</h3></div>
+          </article>
+          <article class="resource-card" data-reveal>
+            <video class="resource-video" controls preload="metadata" playsinline><source src="resource-10.mp4" type="video/mp4"></video>
+            <div class="resource-info"><h3>视频标题待补充</h3></div>
+          </article>
+          <article class="resource-card" data-reveal>
+            <video class="resource-video" controls preload="metadata" playsinline><source src="resource-11.mp4" type="video/mp4"></video>
+            <div class="resource-info"><h3>视频标题待补充</h3></div>
+          </article>
+          <article class="resource-card" data-reveal>
+            <video class="resource-video" controls preload="metadata" playsinline><source src="resource-12.mp4" type="video/mp4"></video>
+            <div class="resource-info"><h3>视频标题待补充</h3></div>
+          </article>
         </div>
       </div>
+    </section>
 
-    </div>
-  </section>
+    <section class="section" id="application">
+      <div class="w">
+        <div class="section-heading showcase-heading" data-reveal>
+          <div class="showcase-heading-main">
+            <h2>申报材料</h2>
+          </div>
+          <i class="showcase-line" aria-hidden="true"></i>
+        </div>
 
-
-  <!-- ════════════════════════════════════════════
-       Footer
-       ════════════════════════════════════════════ -->
-  <footer class="bg-[#8C1515] text-red-200 mt-auto">
-    <div class="max-w-7xl mx-auto px-6 py-10">
-      <div class="home-footer-grid footer-contact-layout">
-
-        <!-- 联系方式 -->
-        <div class="footer-contact-only">
-          <h4 class="text-white text-sm font-semibold mb-3 pb-2 border-b border-white/20">联系我们</h4>
-          <ul class="space-y-2.5 text-xs">
-            <li class="flex items-start gap-2 text-red-200">
-              <i data-lucide="map-pin" class="text-[#C9A84C] flex-shrink-0 w-4 h-4 mt-0.5"></i>
-              <span>（希望大道校区）江苏省盐城市希望大道中路1号</span>
-            </li>
-            <li class="flex items-center gap-2 text-red-200">
-              <i data-lucide="mail-open" class="text-[#C9A84C] flex-shrink-0 w-4 h-4"></i>
-              邮编：224051
-            </li>
-            <li class="flex items-center gap-2 text-red-200">
-              <i data-lucide="phone" class="text-[#C9A84C] flex-shrink-0 w-4 h-4"></i>
-              联系电话：0515-88298122
-            </li>
-          </ul>
+        <div class="document-grid" data-reveal>
+          <article class="document-group" id="material-application">
+            <h3>申报书</h3>
+            <ul>
+              <li><a href="#">成果预览</a></li>
+              <li><a href="#">成果曾获奖情况</a></li>
+              <li><a href="#">成果起止时间</a></li>
+              <li><a href="#">成果简介</a></li>
+              <li><a href="#">主要解决的教学问题</a></li>
+              <li><a href="#">解决教学问题的方法</a></li>
+              <li><a href="#">成果的创新点</a></li>
+              <li><a href="#">成果的推广应用效果</a></li>
+              <li><a href="#">主要完成人情况</a></li>
+              <li><a href="#">推荐单位意见</a></li>
+            </ul>
+          </article>
+          <article class="document-group" id="summary">
+            <h3>成果总结</h3>
+            <ul>
+              <li><a href="#">成果研究背景</a></li>
+              <li><a href="#">主要解决的教学问题</a></li>
+              <li><a href="#">解决问题的过程与方法</a></li>
+              <li><a href="#">成果的主要内容</a></li>
+              <li><a href="#">成果的创新之处</a></li>
+              <li><a href="#">成果的推广应用效果</a></li>
+            </ul>
+          </article>
+          <article class="document-group" id="appraisal">
+            <h3>成果鉴定</h3>
+            <ul><li><a href="#">专家鉴定意见</a></li></ul>
+          </article>
+          <article class="document-group" id="promotion">
+            <h3>推广应用</h3>
+            <ul>
+              <li><a href="#">媒体报道</a></li>
+              <li><a href="#">评价及交流</a></li>
+            </ul>
+          </article>
+          <article class="document-group" id="support">
+            <h3>支撑材料</h3>
+            <ul><li><a href="#">支撑材料</a></li></ul>
+          </article>
         </div>
 
       </div>
-    </div>
+    </section>
+  </main>
 
-    <div class="border-t border-white/20 py-3">
-      <div class="home-footer-bar max-w-7xl mx-auto px-6 text-xs text-red-200">
-        <span>盐城工学院版权所有 &nbsp;苏ICP备11037185号-1</span>
-        <span>技术支持：教务处信息化建设团队</span>
+  <footer class="site-footer">
+    <div class="footer-main w">
+      <div>
+        <strong>盐城工学院 · 2026年国家教学成果申报平台</strong>
+        <p>地址：江苏省盐城市亭湖区希望大道中路1号　邮编：224051</p>
+        <p>联系电话：0515-88298122　邮箱：jwc@ycit.edu.cn</p>
       </div>
+      <div class="footer-mark">YCIT</div>
     </div>
+    <div class="footer-bottom">盐城工学院版权所有　苏ICP备11037185号-1</div>
   </footer>
 
-
-  <!-- ════════════════════════════════════════════
-       脚本
-       ════════════════════════════════════════════ -->
-  <!-- Lucide 图标渲染 -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      if (window.lucide) lucide.createIcons();
-    });
-  </script>
-  <!-- 页面交互脚本 -->
-  <script src="js/page.js"></script>
-
+  <script src="js/home.js"></script>
 </body>
 </html>
