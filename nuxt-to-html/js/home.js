@@ -3,12 +3,47 @@
 
   var menuButton = document.getElementById("mobile-nav-btn");
   var navShell = document.getElementById("nav-shell");
+  var drawerCloseButton = document.querySelector(".mobile-drawer-close");
+  var isMenuOpen = false;
+
+  function updateMobileNavPosition() {
+    var header = document.querySelector(".site-head");
+    if (!header || !navShell) return;
+    var headerBottom = Math.max(0, header.getBoundingClientRect().bottom);
+    navShell.style.setProperty("--mobile-nav-top", (headerBottom + 8) + "px");
+  }
+
+  function setMenuOpen(open) {
+    if (!menuButton || !navShell) return;
+    isMenuOpen = open;
+    if (open) updateMobileNavPosition();
+    navShell.classList.toggle("open", open);
+    document.body.classList.toggle("mobile-nav-open", open);
+    menuButton.setAttribute("aria-expanded", String(open));
+    menuButton.setAttribute("aria-label", open ? "关闭导航" : "打开导航");
+  }
 
   if (menuButton && navShell) {
-    menuButton.addEventListener("click", function () {
-      var isOpen = navShell.classList.toggle("open");
-      menuButton.setAttribute("aria-expanded", String(isOpen));
-      menuButton.setAttribute("aria-label", isOpen ? "关闭导航" : "打开导航");
+    menuButton.addEventListener("click", function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      setMenuOpen(!isMenuOpen);
+    });
+
+    if (drawerCloseButton) {
+      drawerCloseButton.addEventListener("click", function () {
+        setMenuOpen(false);
+      });
+    }
+
+    document.addEventListener("click", function (event) {
+      if (isMenuOpen && !navShell.contains(event.target) && !menuButton.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && isMenuOpen) setMenuOpen(false);
     });
   }
 
@@ -48,9 +83,7 @@
       if (window.innerWidth > 700) return;
       var clickedLink = event.target.closest("a");
       if (!clickedLink || clickedLink.parentElement.classList.contains("has-submenu")) return;
-      navShell.classList.remove("open");
-      menuButton.setAttribute("aria-expanded", "false");
-      menuButton.setAttribute("aria-label", "打开导航");
+      setMenuOpen(false);
     });
   }
 
@@ -68,22 +101,46 @@
   }
 
   window.addEventListener("resize", function () {
-    if (window.innerWidth <= 700 || !navShell) return;
-    navShell.classList.remove("open");
+    if (!navShell) return;
+    if (window.innerWidth <= 700) {
+      if (isMenuOpen) updateMobileNavPosition();
+      return;
+    }
+    setMenuOpen(false);
     navShell.querySelectorAll(".submenu-open").forEach(function (item) {
       item.classList.remove("submenu-open");
     });
     navShell.querySelectorAll("[aria-expanded]").forEach(function (link) {
       link.setAttribute("aria-expanded", "false");
     });
-    if (menuButton) {
-      menuButton.setAttribute("aria-expanded", "false");
-      menuButton.setAttribute("aria-label", "打开导航");
-    }
   });
 
   var video = document.getElementById("achievement-video");
+  var playButton = document.getElementById("film-play-btn");
   var chapterButtons = document.querySelectorAll("[data-video-time]");
+
+  if (video && playButton) {
+    function setPlayButtonVisible(visible) {
+      playButton.classList.toggle("is-hidden", !visible);
+      playButton.setAttribute("aria-hidden", String(!visible));
+      playButton.tabIndex = visible ? 0 : -1;
+    }
+
+    playButton.addEventListener("click", function () {
+      video.play().catch(function () {
+        setPlayButtonVisible(true);
+      });
+    });
+    video.addEventListener("play", function () {
+      setPlayButtonVisible(false);
+    });
+    video.addEventListener("pause", function () {
+      setPlayButtonVisible(true);
+    });
+    video.addEventListener("ended", function () {
+      setPlayButtonVisible(true);
+    });
+  }
 
   chapterButtons.forEach(function (button) {
     button.addEventListener("click", function () {

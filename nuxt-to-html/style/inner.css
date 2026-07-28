@@ -392,6 +392,9 @@ body.inner-page {
   .inner-breadcrumb .w { min-height: 42px; font-size: 13px; }
   .inner-page .main .kuaiXun .kuaiXun-con h3 { font-size: 23px; }
   .inner-page .main .kuaiXun .kuaiXun-con p { font-size: 16px; line-height: 1.9; }
+  .inner-page .main .wape-left {
+    display: none !important;
+  }
 }
 
 @media (max-width: 560px) {

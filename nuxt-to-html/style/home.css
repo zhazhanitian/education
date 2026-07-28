@@ -121,6 +121,7 @@ button, input { font: inherit; }
 
 /* CMS navigation: .nav > ul > li > ul */
 .nav-shell { background: linear-gradient(90deg, var(--blue-950), var(--blue-800)); }
+.mobile-drawer-head { display: none; }
 .nav-component .nav {
   float: none !important;
   width: 100% !important;
@@ -523,6 +524,7 @@ button, input { font: inherit; }
   letter-spacing: .24em;
 }
 .film-player {
+  position: relative;
   grid-column: 2;
   grid-row: 2;
   align-self: start;
@@ -540,6 +542,44 @@ button, input { font: inherit; }
   aspect-ratio: 16 / 9;
   object-fit: cover;
   background: #090d12;
+}
+.film-play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  width: 78px;
+  height: 78px;
+  padding: 0;
+  border: 2px solid rgba(255,255,255,.9);
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(6, 44, 98, .78);
+  box-shadow: 0 8px 28px rgba(0,0,0,.3);
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  transition: opacity .2s, transform .2s, background .2s;
+}
+.film-play-btn::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-left: 19px solid currentColor;
+  content: "";
+  transform: translate(-38%, -50%);
+}
+.film-play-btn:hover {
+  background: rgba(18, 98, 173, .94);
+  transform: translate(-50%, -50%) scale(1.06);
+}
+.film-play-btn.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(.86);
 }
 .film-chapters {
   grid-column: 1;
@@ -1155,6 +1195,15 @@ button, input { font: inherit; }
     grid-row: 2;
     margin-top: 23px;
   }
+  .film-play-btn {
+    width: 62px;
+    height: 62px;
+  }
+  .film-play-btn::before {
+    border-top-width: 10px;
+    border-bottom-width: 10px;
+    border-left-width: 16px;
+  }
   .film-chapters {
     display: block;
     grid-column: 1;
@@ -1212,4 +1261,180 @@ button, input { font: inherit; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
   [data-reveal] { opacity: 1; transform: none; }
+}
+
+/* 移动端悬浮导航面板 */
+body.mobile-nav-open {
+  overflow: hidden;
+}
+body.mobile-nav-open::before {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  background: rgba(5, 24, 46, .42);
+  content: "";
+}
+
+@media (max-width: 700px) {
+  .site-head {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  .mobile-nav-btn[aria-expanded="true"] span {
+    opacity: 0;
+  }
+  .mobile-nav-btn[aria-expanded="true"]::before {
+    transform: translateY(6px) rotate(45deg);
+  }
+  .mobile-nav-btn[aria-expanded="true"]::after {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+  .nav-shell,
+  .nav-shell.open {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: auto;
+    z-index: 1002;
+    display: block;
+    width: min(84vw, 360px);
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    border: 0;
+    border-left: 1px solid rgba(18, 98, 173, .18);
+    border-radius: 0;
+    background: #fff;
+    box-shadow: 0 18px 46px rgba(3, 31, 65, .3);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateX(100%);
+    transform-origin: top right;
+    transition: opacity .2s, transform .22s, visibility .2s;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  .nav-shell.open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+  }
+  .mobile-drawer-head {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    display: flex;
+    height: 64px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 17px 0 20px;
+    border-bottom: 1px solid #dfe9f2;
+    color: #fff;
+    background: linear-gradient(100deg, var(--blue-950), var(--blue-700));
+  }
+  .mobile-drawer-head strong {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: .08em;
+  }
+  .mobile-drawer-close {
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 1px solid rgba(255,255,255,.3);
+    border-radius: 50%;
+    color: #fff;
+    font-size: 29px;
+    font-weight: 300;
+    line-height: 34px;
+    background: rgba(255,255,255,.08);
+    cursor: pointer;
+  }
+  .nav-shell .nav-component {
+    width: 100%;
+    height: calc(100vh - 64px);
+    height: calc(100dvh - 64px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  .nav-shell .w {
+    width: 100%;
+  }
+  .nav-shell .nav > ul {
+    display: block !important;
+    height: auto !important;
+    padding: 7px !important;
+    background: #fff !important;
+  }
+  .nav-shell .nav > ul > li {
+    width: 100% !important;
+    height: auto !important;
+    border-bottom: 1px solid #e9f0f6;
+    background: #fff !important;
+  }
+  .nav-shell .nav > ul > li:last-child {
+    border-bottom: 0;
+  }
+  .nav-shell .nav > ul > li > a {
+    height: 50px !important;
+    justify-content: flex-start !important;
+    padding: 0 44px 0 16px !important;
+    color: #24415f !important;
+    font-size: 16px !important;
+    line-height: 50px !important;
+    background: #fff !important;
+  }
+  .nav-shell .nav > ul > li > a::after {
+    display: none;
+  }
+  .nav-shell .nav > ul > li:hover > a,
+  .nav-shell .nav > ul > li.submenu-open > a {
+    color: var(--blue-800) !important;
+    background: #f1f7fc !important;
+  }
+  .nav-shell .nav > ul > li.has-submenu > a::before {
+    right: 18px;
+    border-right-color: #6384a3;
+    border-bottom-color: #6384a3;
+  }
+  .nav-shell .nav > ul > li > ul {
+    position: static !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 5px 0 7px !important;
+    border: 0;
+    background: #f6f9fc !important;
+    box-shadow: none;
+    transform: none;
+  }
+  .nav-shell .nav > ul > li:hover > ul {
+    display: none !important;
+  }
+  .nav-shell .nav > ul > li.submenu-open > ul {
+    display: block !important;
+  }
+  .nav-shell .nav > ul > li > ul > li {
+    border: 0;
+    background: transparent !important;
+  }
+  .nav-shell .nav > ul > li > ul a {
+    padding: 11px 20px 11px 32px !important;
+    color: #587089 !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    background: transparent !important;
+  }
+  .nav-shell .nav > ul > li > ul a:hover {
+    color: var(--blue-800) !important;
+    background: #e8f2fa !important;
+  }
 }
