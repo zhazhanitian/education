@@ -5,6 +5,11 @@
   var navShell = document.getElementById("nav-shell");
   var drawerCloseButton = document.querySelector(".mobile-drawer-close");
   var resourceScrollStorageKey = "ycit-scroll-to-resources";
+  var isMobileDevice = Boolean(
+    (navigator.userAgentData && navigator.userAgentData.mobile) ||
+    /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+  );
   var isMenuOpen = false;
 
   function updateMobileNavPosition() {
@@ -142,7 +147,7 @@
       link.setAttribute("aria-expanded", "false");
 
       link.addEventListener("click", function (event) {
-        if (window.innerWidth > 700) return;
+        if (!isMobileDevice || window.innerWidth > 700) return;
         event.preventDefault();
 
         var willOpen = !item.classList.contains("submenu-open");
@@ -157,7 +162,7 @@
     });
 
     navShell.addEventListener("click", function (event) {
-      if (window.innerWidth > 700) return;
+      if (!isMobileDevice || window.innerWidth > 700) return;
       var clickedLink = event.target.closest("a");
       if (!clickedLink || clickedLink.parentElement.classList.contains("has-submenu")) return;
       setMenuOpen(false);
@@ -180,7 +185,7 @@
 
   window.addEventListener("resize", function () {
     if (!navShell) return;
-    if (window.innerWidth <= 700) {
+    if (isMobileDevice && window.innerWidth <= 700) {
       if (isMenuOpen) updateMobileNavPosition();
       return;
     }
