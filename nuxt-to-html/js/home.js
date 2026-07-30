@@ -4,6 +4,7 @@
   var menuButton = document.getElementById("mobile-nav-btn");
   var navShell = document.getElementById("nav-shell");
   var drawerCloseButton = document.querySelector(".mobile-drawer-close");
+  var resourceScrollStorageKey = "ycit-scroll-to-resources";
   var isMenuOpen = false;
 
   function updateMobileNavPosition() {
@@ -47,10 +48,86 @@
     });
   }
 
+  /* “教学资源”由前端统一插入，固定为倒数第三个菜单。 */
+  function insertResourceMenuItem() {
+    if (!navShell) return;
+
+    var menu = navShell.querySelector(".nav > ul");
+    if (!menu) return;
+
+    Array.prototype.slice.call(menu.children).forEach(function (item) {
+      var link = item.querySelector(":scope > a");
+      if (link && link.textContent.trim() === "教学资源") {
+        item.remove();
+      }
+    });
+
+    var resourceItem = document.createElement("li");
+    var resourceLink = document.createElement("a");
+    var resourceSection = document.getElementById("resources");
+    var homeLink = document.querySelector(".brand-identity > a[href]");
+    var homeHref = homeLink ? homeLink.getAttribute("href") : "/";
+
+    resourceItem.className = "js-resource-nav";
+    resourceLink.textContent = "教学资源";
+    resourceLink.href = resourceSection ? "#resources" : homeHref;
+    resourceItem.appendChild(resourceLink);
+
+    var insertIndex = Math.max(0, menu.children.length - 2);
+    menu.insertBefore(resourceItem, menu.children[insertIndex] || null);
+
+    if (resourceSection) {
+      resourceLink.addEventListener("click", function (event) {
+        event.preventDefault();
+        setMenuOpen(false);
+        resourceSection.scrollIntoView({
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+          block: "start"
+        });
+        if (window.location.hash !== "#resources") {
+          window.history.pushState(null, "", "#resources");
+        }
+      });
+    } else {
+      resourceLink.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        try {
+          window.sessionStorage.setItem(resourceScrollStorageKey, "true");
+        } catch (error) {
+          /* 存储不可用时仍然保证能够返回首页。 */
+        }
+        window.location.assign(homeLink ? homeLink.href : homeHref);
+      });
+    }
+  }
+
+  function scrollToRequestedResource() {
+    var resourceSection = document.getElementById("resources");
+    if (!resourceSection) return;
+
+    var shouldScroll = false;
+    try {
+      shouldScroll = window.sessionStorage.getItem(resourceScrollStorageKey) === "true";
+      window.sessionStorage.removeItem(resourceScrollStorageKey);
+    } catch (error) {
+      return;
+    }
+    if (!shouldScroll) return;
+
+    window.requestAnimationFrame(function () {
+      resourceSection.scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+        block: "start"
+      });
+    });
+  }
+
   /* CMS 服务端输出 .nav 后，增强移动端二级菜单交互。 */
   function enhanceCMSNavigation() {
     if (!navShell || navShell.getAttribute("data-enhanced") === "true") return;
 
+    insertResourceMenuItem();
     var parentItems = navShell.querySelectorAll(".nav > ul > li");
     if (!parentItems.length) return;
 
@@ -88,6 +165,7 @@
   }
 
   enhanceCMSNavigation();
+  scrollToRequestedResource();
 
   /* 兼容 CMS 在页面就绪后异步写入子组件的情况。 */
   if (navShell && !navShell.querySelector(".nav") && "MutationObserver" in window) {
@@ -117,7 +195,26 @@
 
   var video = document.getElementById("achievement-video");
   var playButton = document.getElementById("film-play-btn");
-  var chapterButtons = document.querySelectorAll("[data-video-time]");
+  var chapterButtons = document.querySelectorAll("#video-chapters button");
+
+  function parseTimeToSeconds(value) {
+    var match = String(value || "").match(/\d{1,2}(?::\d{2}){1,2}/);
+    if (!match) return 0;
+
+    var parts = match[0].split(":").map(function (part) {
+      return Number(part);
+    });
+    if (parts.some(function (part) { return Number.isNaN(part); })) return 0;
+
+    return parts.reduce(function (total, part) {
+      return total * 60 + part;
+    }, 0);
+  }
+
+  function getChapterStartSeconds(button) {
+    var time = button.querySelector("time");
+    return parseTimeToSeconds(time ? time.textContent : "");
+  }
 
   if (video && playButton) {
     function setPlayButtonVisible(visible) {
@@ -145,7 +242,7 @@
   chapterButtons.forEach(function (button) {
     button.addEventListener("click", function () {
       if (!video) return;
-      var seconds = Number(button.getAttribute("data-video-time")) || 0;
+      var seconds = getChapterStartSeconds(button);
       video.currentTime = seconds;
       video.play().catch(function () {
         /* 浏览器禁止自动播放时，保留定位结果并交由用户手动播放。 */
@@ -161,7 +258,7 @@
     video.addEventListener("timeupdate", function () {
       var active = chapterButtons[0];
       chapterButtons.forEach(function (button) {
-        if (video.currentTime >= Number(button.getAttribute("data-video-time"))) {
+        if (video.currentTime >= getChapterStartSeconds(button)) {
           active = button;
         }
       });

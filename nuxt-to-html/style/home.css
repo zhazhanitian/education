@@ -724,8 +724,8 @@ button, input { font: inherit; }
 /* Resources */
 .resource-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px 20px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
 }
 .resource-card {
   display: flex;
